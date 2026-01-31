@@ -1,0 +1,19 @@
+let s be stack
+let q be queue
+let g be graph
+
+push s 10
+push s 20
+pop s
+
+enqueue q 5
+dequeue q
+
+add_edge g 1 2
+remove_edge g 1 2
+
+let x be 3
+while x > 0 do
+    print x
+    set x to x - 1
+end
