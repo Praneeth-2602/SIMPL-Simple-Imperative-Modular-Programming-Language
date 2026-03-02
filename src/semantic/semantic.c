@@ -25,6 +25,13 @@
 static int error_count = 0;
 static int warning_count = 0;
 static int optimization_count = 0;
+static int declaration_count = 0;
+static int assignment_count = 0;
+static int arithmetic_ops = 0;
+static int adt_ops = 0;
+static int constant_exprs = 0;
+static int current_loop_depth = 0;
+static int max_loop_depth = 0;
 static SemanticOptions current_opts = {0, 0, 0};
 
 /* ============================================================
@@ -141,6 +148,7 @@ static Type check_expression_type(ASTNode *node) {
 
     switch (node->type) {
         case AST_NUMBER:
+            node->inferred_type = TYPE_INT;
             return TYPE_INT;
 
         case AST_IDENTIFIER: {
@@ -148,6 +156,7 @@ static Type check_expression_type(ASTNode *node) {
             if (t == TYPE_UNKNOWN) {
                 semantic_error("undeclared variable", node->name);
             }
+            node->inferred_type = t;
             return t;
         }
 
@@ -157,27 +166,33 @@ static Type check_expression_type(ASTNode *node) {
 
             if (node->op == '+' || node->op == '-' ||
                 node->op == '*' || node->op == '/') {
-                if (is_adt_type(left_type)) {
-                    semantic_error("cannot perform arithmetic on ADT type", NULL);
+                arithmetic_ops++;
+                if (left_type != TYPE_INT || right_type != TYPE_INT) {
+                    semantic_error("arithmetic allowed only on integers", NULL);
                 }
-                if (is_adt_type(right_type)) {
-                    semantic_error("cannot perform arithmetic on ADT type", NULL);
+                if (node->left && node->right &&
+                    node->left->type == AST_NUMBER && node->right->type == AST_NUMBER) {
+                    constant_exprs++;
                 }
+                node->inferred_type = TYPE_INT;
                 return TYPE_INT;
             }
 
             if (node->op == '<' || node->op == '>' ||
                 node->op == '=' || node->op == '!') {
-                if (is_adt_type(left_type) || is_adt_type(right_type)) {
-                    semantic_error("cannot compare ADT types", NULL);
+                if (left_type != TYPE_INT || right_type != TYPE_INT) {
+                    semantic_error("conditions must compare integers", NULL);
                 }
+                node->inferred_type = TYPE_INT;
                 return TYPE_INT;
             }
 
+            node->inferred_type = TYPE_UNKNOWN;
             return TYPE_UNKNOWN;
         }
 
         default:
+            node->inferred_type = TYPE_UNKNOWN;
             return TYPE_UNKNOWN;
     }
 }
@@ -343,20 +358,22 @@ static void check_node(ASTNode *node) {
 
         case AST_DECL: {
             const char *name = node->left->name;
+            declaration_count++;
 
             if (symtab_exists(name)) {
                 semantic_error("variable already declared", name);
             } else {
                 Type expr_type = check_expression_type(node->right);
                 
-                if (is_adt_type(expr_type)) {
-                    semantic_error("cannot assign ADT to integer variable", name);
-                }
-                
-                symtab_insert(name, TYPE_INT);
-                
-                if (current_opts.verbose) {
-                    printf("  [DECL] %s : int\n", name);
+                if (expr_type != TYPE_INT) {
+                    semantic_error("variable declarations must be integer-valued", name);
+                } else {
+                    symtab_insert(name, TYPE_INT);
+                    node->inferred_type = TYPE_INT;
+
+                    if (current_opts.verbose) {
+                        printf("  [DECL] %s : int\n", name);
+                    }
                 }
             }
             break;
@@ -371,6 +388,7 @@ static void check_node(ASTNode *node) {
                 semantic_error("variable already declared", name);
             } else {
                 symtab_insert(name, adt_type);
+                node->inferred_type = adt_type;
                 
                 if (current_opts.verbose) {
                     printf("  [DECL] %s : %s\n", name, type_to_string(adt_type));
@@ -382,52 +400,58 @@ static void check_node(ASTNode *node) {
         case AST_ASSIGN: {
             const char *name = node->left->name;
             Type var_type = symtab_lookup(name);
+            assignment_count++;
 
             if (var_type == TYPE_UNKNOWN) {
                 semantic_error("assignment to undeclared variable", name);
-            } else if (is_adt_type(var_type)) {
-                char msg[200];
-                snprintf(msg, sizeof(msg),
-                    "cannot assign to %s variable - use ADT operations",
-                    type_to_string(var_type));
-                semantic_error(msg, name);
             } else {
                 Type expr_type = check_expression_type(node->right);
-                if (is_adt_type(expr_type)) {
-                    semantic_error("cannot assign ADT value to integer variable", name);
+                if (var_type != expr_type) {
+                    char msg[200];
+                    snprintf(msg, sizeof(msg), "type mismatch in assignment to '%s' (%s <- %s)",
+                             name, type_to_string(var_type), type_to_string(expr_type));
+                    semantic_error(msg, name);
                 }
+                node->inferred_type = var_type;
             }
             break;
         }
 
         case AST_PRINT: {
             Type expr_type = check_expression_type(node->left);
-            
-            if (is_adt_type(expr_type)) {
-                char msg[200];
-                snprintf(msg, sizeof(msg),
-                    "cannot print %s - ADTs are not printable (SIMPL safety)",
-                    type_to_string(expr_type));
-                semantic_error(msg, NULL);
-            }
+            node->inferred_type = expr_type;
             break;
         }
 
-        case AST_IF:
-            check_expression_type(node->left);
+        case AST_IF: {
+            Type cond_type = check_expression_type(node->left);
+            if (cond_type != TYPE_INT) {
+                semantic_error("conditions must compare integers", NULL);
+            }
             check_node(node->right);
             check_node(node->third);
             break;
+        }
 
-        case AST_WHILE:
-            check_expression_type(node->left);
+        case AST_WHILE: {
+            Type cond_type = check_expression_type(node->left);
+            if (cond_type != TYPE_INT) {
+                semantic_error("conditions must compare integers", NULL);
+            }
+            current_loop_depth++;
+            if (current_loop_depth > max_loop_depth) {
+                max_loop_depth = current_loop_depth;
+            }
             check_node(node->right);
+            current_loop_depth--;
             break;
+        }
 
         case AST_ADT_OP: {
             const char *name = node->left->name;
             int op_code = node->third->value;
             Type var_type = symtab_lookup(name);
+            adt_ops++;
 
             if (var_type == TYPE_UNKNOWN) {
                 semantic_error("ADT operation on undeclared variable", name);
@@ -449,10 +473,17 @@ static void check_node(ASTNode *node) {
             check_optimization_pattern(name, op_code);
             simulate_adt_operation(node);
 
-            if (node->right && node->right->type != AST_BINOP) {
-                Type arg_type = check_expression_type(node->right);
-                if (is_adt_type(arg_type)) {
-                    semantic_error("cannot use ADT as argument", NULL);
+            if (node->right) {
+                if (node->right->type == AST_BINOP) {
+                    Type t = check_expression_type(node->right);
+                    if (t != TYPE_INT) {
+                        semantic_error("ADT operation arguments must be integers", NULL);
+                    }
+                } else {
+                    Type arg_type = check_expression_type(node->right);
+                    if (arg_type != TYPE_INT) {
+                        semantic_error("ADT operation arguments must be integers", NULL);
+                    }
                 }
             }
             break;
@@ -470,10 +501,18 @@ static void check_node(ASTNode *node) {
  * PUBLIC API
  * ============================================================ */
 
-SemanticResult semantic_check_with_options(ASTNode *root, SemanticOptions opts) {
+SemanticReport semantic_check_with_options(ASTNode *root, SemanticOptions opts) {
     error_count = 0;
     warning_count = 0;
     optimization_count = 0;
+    declaration_count = 0;
+    assignment_count = 0;
+    arithmetic_ops = 0;
+    adt_ops = 0;
+    constant_exprs = 0;
+    current_loop_depth = 0;
+    max_loop_depth = 0;
+
     current_opts = opts;
     last_op.var_name[0] = '\0';
     last_op.op_code = 0;
@@ -481,31 +520,43 @@ SemanticResult semantic_check_with_options(ASTNode *root, SemanticOptions opts) 
     symtab_init();
     check_node(root);
 
-    SemanticResult result;
-    result.error_count = error_count;
-    result.warning_count = warning_count;
-    result.optimizations_applied = optimization_count;
+    SemanticReport report;
+    report.error_count = error_count;
+    report.warning_count = warning_count;
+    report.optimizations_applied = optimization_count;
+    report.declaration_count = declaration_count;
+    report.assignment_count = assignment_count;
+    report.arithmetic_ops = arithmetic_ops;
+    report.adt_ops = adt_ops;
+    report.constant_exprs = constant_exprs;
+    report.max_loop_depth = max_loop_depth;
 
     if (opts.verbose) {
-        printf("\n=== Summary ===\n");
-        printf("Errors:   %d\n", error_count);
+        printf("\n=== SIMPL Semantic Summary ===\n");
+        printf("Declarations:          %d\n", declaration_count);
+        printf("Assignments:           %d\n", assignment_count);
+        printf("Arithmetic Ops:        %d\n", arithmetic_ops);
+        printf("ADT Ops:               %d\n", adt_ops);
+        printf("Constant Expressions:  %d\n", constant_exprs);
+        printf("Max Loop Depth:        %d\n", max_loop_depth);
+        printf("\nErrors:   %d\n", error_count);
         printf("Warnings: %d\n", warning_count);
         if (opts.show_optimizations) {
             printf("Optimizations detected: %d\n", optimization_count);
         }
-        printf("===============\n");
+        printf("================================\n");
     }
 
-    return result;
+    return report;
 }
 
-SemanticResult semantic_check(ASTNode *root) {
+SemanticReport semantic_check(ASTNode *root) {
     SemanticOptions opts = {1, 1, 0};
     return semantic_check_with_options(root, opts);
 }
 
 int semantic_analyze(ASTNode *root) {
     SemanticOptions opts = {0, 0, 0};
-    SemanticResult result = semantic_check_with_options(root, opts);
-    return result.error_count;
+    SemanticReport report = semantic_check_with_options(root, opts);
+    return report.error_count;
 }

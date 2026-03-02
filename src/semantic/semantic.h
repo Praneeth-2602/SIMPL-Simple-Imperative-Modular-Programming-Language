@@ -32,20 +32,28 @@ typedef struct {
     int strict_mode;                /* Extra strict checking */
 } SemanticOptions;
 
-/* Semantic analysis result */
+/* Semantic analysis report (errors + metrics) */
 typedef struct {
     int error_count;
     int warning_count;
     int optimizations_applied;
-} SemanticResult;
+
+    /* Metrics for adaptive optimization */
+    int declaration_count;
+    int assignment_count;
+    int arithmetic_ops;
+    int adt_ops;
+    int constant_exprs;
+    int max_loop_depth;
+} SemanticReport;
 
 /* Perform semantic analysis on the AST
  * Returns: SemanticResult with error/warning counts
  */
-SemanticResult semantic_check(ASTNode *root);
+SemanticReport semantic_check(ASTNode *root);
 
 /* Perform semantic analysis with options */
-SemanticResult semantic_check_with_options(ASTNode *root, SemanticOptions opts);
+SemanticReport semantic_check_with_options(ASTNode *root, SemanticOptions opts);
 
 /* Legacy API (returns error count) */
 int semantic_analyze(ASTNode *root);
