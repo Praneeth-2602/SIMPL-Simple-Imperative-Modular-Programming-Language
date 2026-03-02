@@ -1,6 +1,8 @@
 #ifndef AST_H
 #define AST_H
 
+#include "../semantic/symbol_table.h"
+
 typedef enum {
     AST_PROGRAM,
     AST_STATEMENT_LIST,
@@ -42,6 +44,8 @@ typedef struct ASTNode {
     char *name;          /* for identifiers */
     int value;           /* for numbers, ADT type codes, op codes */
     char op;             /* '+', '-', '*', '/', '<', '>', '=', '!' */
+
+    Type inferred_type;  /* set during semantic analysis */
 
     struct ASTNode *left;
     struct ASTNode *right;

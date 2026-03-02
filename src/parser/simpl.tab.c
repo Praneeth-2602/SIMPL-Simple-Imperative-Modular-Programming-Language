@@ -545,11 +545,11 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    57,    57,    61,    63,    70,    71,    72,    73,    74,
-      75,    76,    82,    92,    98,   104,   110,   121,   131,   138,
-     140,   145,   152,   153,   154,   155,   161,   162,   163,   167,
-     168,   169,   173,   174,   180,   186,   192,   198,   204,   210,
-     216,   223
+       0,    56,    56,    63,    65,    72,    73,    74,    75,    76,
+      77,    78,    84,    94,   100,   106,   112,   123,   133,   140,
+     142,   147,   154,   155,   156,   157,   163,   164,   165,   169,
+     170,   171,   175,   176,   182,   188,   194,   200,   206,   212,
+     218,   225
 };
 #endif
 
@@ -1445,302 +1445,304 @@ yyreduce:
     {
   case 2: /* program: statement_list  */
 #line 57 "src/parser/simpl.y"
-                     { ast_root = (yyval.node) = make_node(AST_PROGRAM, (yyvsp[0].node), NULL, NULL); }
-#line 1450 "src/parser/simpl.tab.c"
+      {
+          ast_root = make_node(AST_PROGRAM, (yyvsp[0].node), NULL, NULL);
+      }
+#line 1452 "src/parser/simpl.tab.c"
     break;
 
   case 3: /* statement_list: statement  */
-#line 62 "src/parser/simpl.y"
+#line 64 "src/parser/simpl.y"
       { (yyval.node) = make_node(AST_STATEMENT_LIST, (yyvsp[0].node), NULL, NULL); }
-#line 1456 "src/parser/simpl.tab.c"
+#line 1458 "src/parser/simpl.tab.c"
     break;
 
   case 4: /* statement_list: statement_list statement  */
-#line 64 "src/parser/simpl.y"
+#line 66 "src/parser/simpl.y"
       { (yyval.node) = make_node(AST_STATEMENT_LIST, (yyvsp[-1].node), (yyvsp[0].node), NULL); }
-#line 1462 "src/parser/simpl.tab.c"
+#line 1464 "src/parser/simpl.tab.c"
     break;
 
   case 5: /* statement: declaration  */
-#line 70 "src/parser/simpl.y"
+#line 72 "src/parser/simpl.y"
                       { (yyval.node) = (yyvsp[0].node); }
-#line 1468 "src/parser/simpl.tab.c"
+#line 1470 "src/parser/simpl.tab.c"
     break;
 
   case 6: /* statement: assignment  */
-#line 71 "src/parser/simpl.y"
+#line 73 "src/parser/simpl.y"
                       { (yyval.node) = (yyvsp[0].node); }
-#line 1474 "src/parser/simpl.tab.c"
+#line 1476 "src/parser/simpl.tab.c"
     break;
 
   case 7: /* statement: print_stmt  */
-#line 72 "src/parser/simpl.y"
+#line 74 "src/parser/simpl.y"
                       { (yyval.node) = (yyvsp[0].node); }
-#line 1480 "src/parser/simpl.tab.c"
+#line 1482 "src/parser/simpl.tab.c"
     break;
 
   case 8: /* statement: if_stmt  */
-#line 73 "src/parser/simpl.y"
+#line 75 "src/parser/simpl.y"
                       { (yyval.node) = (yyvsp[0].node); }
-#line 1486 "src/parser/simpl.tab.c"
+#line 1488 "src/parser/simpl.tab.c"
     break;
 
   case 9: /* statement: while_stmt  */
-#line 74 "src/parser/simpl.y"
+#line 76 "src/parser/simpl.y"
                       { (yyval.node) = (yyvsp[0].node); }
-#line 1492 "src/parser/simpl.tab.c"
+#line 1494 "src/parser/simpl.tab.c"
     break;
 
   case 10: /* statement: adt_declaration  */
-#line 75 "src/parser/simpl.y"
+#line 77 "src/parser/simpl.y"
                       { (yyval.node) = (yyvsp[0].node); }
-#line 1498 "src/parser/simpl.tab.c"
+#line 1500 "src/parser/simpl.tab.c"
     break;
 
   case 11: /* statement: adt_operation  */
-#line 76 "src/parser/simpl.y"
+#line 78 "src/parser/simpl.y"
                       { (yyval.node) = (yyvsp[0].node); }
-#line 1504 "src/parser/simpl.tab.c"
+#line 1506 "src/parser/simpl.tab.c"
     break;
 
   case 12: /* declaration: LET IDENTIFIER BE expression  */
-#line 83 "src/parser/simpl.y"
+#line 85 "src/parser/simpl.y"
       {
         ASTNode *id = make_identifier((yyvsp[-2].str));
         (yyval.node) = make_node(AST_DECL, id, (yyvsp[0].node), NULL);
       }
-#line 1513 "src/parser/simpl.tab.c"
+#line 1515 "src/parser/simpl.tab.c"
     break;
 
   case 13: /* adt_declaration: LET IDENTIFIER BE STACK  */
-#line 93 "src/parser/simpl.y"
+#line 95 "src/parser/simpl.y"
       {
         ASTNode *id = make_identifier((yyvsp[-2].str));
         ASTNode *type_node = make_number(0);  /* 0 = TYPE_STACK */
         (yyval.node) = make_node(AST_ADT_DECL, id, type_node, NULL);
       }
-#line 1523 "src/parser/simpl.tab.c"
+#line 1525 "src/parser/simpl.tab.c"
     break;
 
   case 14: /* adt_declaration: LET IDENTIFIER BE QUEUE  */
-#line 99 "src/parser/simpl.y"
+#line 101 "src/parser/simpl.y"
       {
         ASTNode *id = make_identifier((yyvsp[-2].str));
         ASTNode *type_node = make_number(1);  /* 1 = TYPE_QUEUE */
         (yyval.node) = make_node(AST_ADT_DECL, id, type_node, NULL);
       }
-#line 1533 "src/parser/simpl.tab.c"
+#line 1535 "src/parser/simpl.tab.c"
     break;
 
   case 15: /* adt_declaration: LET IDENTIFIER BE TREE  */
-#line 105 "src/parser/simpl.y"
+#line 107 "src/parser/simpl.y"
       {
         ASTNode *id = make_identifier((yyvsp[-2].str));
         ASTNode *type_node = make_number(2);  /* 2 = TYPE_TREE */
         (yyval.node) = make_node(AST_ADT_DECL, id, type_node, NULL);
       }
-#line 1543 "src/parser/simpl.tab.c"
+#line 1545 "src/parser/simpl.tab.c"
     break;
 
   case 16: /* adt_declaration: LET IDENTIFIER BE GRAPH  */
-#line 111 "src/parser/simpl.y"
+#line 113 "src/parser/simpl.y"
       {
         ASTNode *id = make_identifier((yyvsp[-2].str));
         ASTNode *type_node = make_number(3);  /* 3 = TYPE_GRAPH */
         (yyval.node) = make_node(AST_ADT_DECL, id, type_node, NULL);
       }
-#line 1553 "src/parser/simpl.tab.c"
+#line 1555 "src/parser/simpl.tab.c"
     break;
 
   case 17: /* assignment: SET IDENTIFIER TO expression  */
-#line 122 "src/parser/simpl.y"
+#line 124 "src/parser/simpl.y"
       {
         ASTNode *id = make_identifier((yyvsp[-2].str));
         (yyval.node) = make_node(AST_ASSIGN, id, (yyvsp[0].node), NULL);
       }
-#line 1562 "src/parser/simpl.tab.c"
+#line 1564 "src/parser/simpl.tab.c"
     break;
 
   case 18: /* print_stmt: PRINT expression  */
-#line 132 "src/parser/simpl.y"
+#line 134 "src/parser/simpl.y"
       { (yyval.node) = make_node(AST_PRINT, (yyvsp[0].node), NULL, NULL); }
-#line 1568 "src/parser/simpl.tab.c"
+#line 1570 "src/parser/simpl.tab.c"
     break;
 
   case 19: /* if_stmt: IF condition THEN statement_list END  */
-#line 139 "src/parser/simpl.y"
+#line 141 "src/parser/simpl.y"
       { (yyval.node) = make_node(AST_IF, (yyvsp[-3].node), (yyvsp[-1].node), NULL); }
-#line 1574 "src/parser/simpl.tab.c"
+#line 1576 "src/parser/simpl.tab.c"
     break;
 
   case 20: /* if_stmt: IF condition THEN statement_list ELSE statement_list END  */
-#line 141 "src/parser/simpl.y"
+#line 143 "src/parser/simpl.y"
       { (yyval.node) = make_node(AST_IF, (yyvsp[-5].node), (yyvsp[-3].node), (yyvsp[-1].node)); }
-#line 1580 "src/parser/simpl.tab.c"
+#line 1582 "src/parser/simpl.tab.c"
     break;
 
   case 21: /* while_stmt: WHILE condition DO statement_list END  */
-#line 146 "src/parser/simpl.y"
+#line 148 "src/parser/simpl.y"
       { (yyval.node) = make_node(AST_WHILE, (yyvsp[-3].node), (yyvsp[-1].node), NULL); }
-#line 1586 "src/parser/simpl.tab.c"
+#line 1588 "src/parser/simpl.tab.c"
     break;
 
   case 22: /* condition: expression LT expression  */
-#line 152 "src/parser/simpl.y"
+#line 154 "src/parser/simpl.y"
                                 { (yyval.node) = make_binop('<', (yyvsp[-2].node), (yyvsp[0].node)); }
-#line 1592 "src/parser/simpl.tab.c"
+#line 1594 "src/parser/simpl.tab.c"
     break;
 
   case 23: /* condition: expression GT expression  */
-#line 153 "src/parser/simpl.y"
+#line 155 "src/parser/simpl.y"
                                 { (yyval.node) = make_binop('>', (yyvsp[-2].node), (yyvsp[0].node)); }
-#line 1598 "src/parser/simpl.tab.c"
+#line 1600 "src/parser/simpl.tab.c"
     break;
 
   case 24: /* condition: expression EQ expression  */
-#line 154 "src/parser/simpl.y"
+#line 156 "src/parser/simpl.y"
                                 { (yyval.node) = make_binop('=', (yyvsp[-2].node), (yyvsp[0].node)); }
-#line 1604 "src/parser/simpl.tab.c"
+#line 1606 "src/parser/simpl.tab.c"
     break;
 
   case 25: /* condition: expression NEQ expression  */
-#line 155 "src/parser/simpl.y"
+#line 157 "src/parser/simpl.y"
                                 { (yyval.node) = make_binop('!', (yyvsp[-2].node), (yyvsp[0].node)); }
-#line 1610 "src/parser/simpl.tab.c"
+#line 1612 "src/parser/simpl.tab.c"
     break;
 
   case 26: /* expression: expression PLUS term  */
-#line 161 "src/parser/simpl.y"
+#line 163 "src/parser/simpl.y"
                             { (yyval.node) = make_binop('+', (yyvsp[-2].node), (yyvsp[0].node)); }
-#line 1616 "src/parser/simpl.tab.c"
+#line 1618 "src/parser/simpl.tab.c"
     break;
 
   case 27: /* expression: expression MINUS term  */
-#line 162 "src/parser/simpl.y"
+#line 164 "src/parser/simpl.y"
                             { (yyval.node) = make_binop('-', (yyvsp[-2].node), (yyvsp[0].node)); }
-#line 1622 "src/parser/simpl.tab.c"
+#line 1624 "src/parser/simpl.tab.c"
     break;
 
   case 28: /* expression: term  */
-#line 163 "src/parser/simpl.y"
+#line 165 "src/parser/simpl.y"
                             { (yyval.node) = (yyvsp[0].node); }
-#line 1628 "src/parser/simpl.tab.c"
+#line 1630 "src/parser/simpl.tab.c"
     break;
 
   case 29: /* term: term MUL factor  */
-#line 167 "src/parser/simpl.y"
+#line 169 "src/parser/simpl.y"
                       { (yyval.node) = make_binop('*', (yyvsp[-2].node), (yyvsp[0].node)); }
-#line 1634 "src/parser/simpl.tab.c"
+#line 1636 "src/parser/simpl.tab.c"
     break;
 
   case 30: /* term: term DIV factor  */
-#line 168 "src/parser/simpl.y"
+#line 170 "src/parser/simpl.y"
                       { (yyval.node) = make_binop('/', (yyvsp[-2].node), (yyvsp[0].node)); }
-#line 1640 "src/parser/simpl.tab.c"
+#line 1642 "src/parser/simpl.tab.c"
     break;
 
   case 31: /* term: factor  */
-#line 169 "src/parser/simpl.y"
+#line 171 "src/parser/simpl.y"
                       { (yyval.node) = (yyvsp[0].node); }
-#line 1646 "src/parser/simpl.tab.c"
+#line 1648 "src/parser/simpl.tab.c"
     break;
 
   case 32: /* factor: NUMBER  */
-#line 173 "src/parser/simpl.y"
+#line 175 "src/parser/simpl.y"
                  { (yyval.node) = make_number((yyvsp[0].num)); }
-#line 1652 "src/parser/simpl.tab.c"
+#line 1654 "src/parser/simpl.tab.c"
     break;
 
   case 33: /* factor: IDENTIFIER  */
-#line 174 "src/parser/simpl.y"
+#line 176 "src/parser/simpl.y"
                  { (yyval.node) = make_identifier((yyvsp[0].str)); }
-#line 1658 "src/parser/simpl.tab.c"
+#line 1660 "src/parser/simpl.tab.c"
     break;
 
   case 34: /* adt_operation: PUSH IDENTIFIER expression  */
-#line 181 "src/parser/simpl.y"
+#line 183 "src/parser/simpl.y"
       {
         ASTNode *id = make_identifier((yyvsp[-1].str));
         ASTNode *op_node = make_number('P');  /* P = push */
         (yyval.node) = make_node(AST_ADT_OP, id, (yyvsp[0].node), op_node);
       }
-#line 1668 "src/parser/simpl.tab.c"
+#line 1670 "src/parser/simpl.tab.c"
     break;
 
   case 35: /* adt_operation: POP IDENTIFIER  */
-#line 187 "src/parser/simpl.y"
+#line 189 "src/parser/simpl.y"
       {
         ASTNode *id = make_identifier((yyvsp[0].str));
         ASTNode *op_node = make_number('p');  /* p = pop */
         (yyval.node) = make_node(AST_ADT_OP, id, NULL, op_node);
       }
-#line 1678 "src/parser/simpl.tab.c"
+#line 1680 "src/parser/simpl.tab.c"
     break;
 
   case 36: /* adt_operation: ENQUEUE IDENTIFIER expression  */
-#line 193 "src/parser/simpl.y"
+#line 195 "src/parser/simpl.y"
       {
         ASTNode *id = make_identifier((yyvsp[-1].str));
         ASTNode *op_node = make_number('E');  /* E = enqueue */
         (yyval.node) = make_node(AST_ADT_OP, id, (yyvsp[0].node), op_node);
       }
-#line 1688 "src/parser/simpl.tab.c"
+#line 1690 "src/parser/simpl.tab.c"
     break;
 
   case 37: /* adt_operation: DEQUEUE IDENTIFIER  */
-#line 199 "src/parser/simpl.y"
+#line 201 "src/parser/simpl.y"
       {
         ASTNode *id = make_identifier((yyvsp[0].str));
         ASTNode *op_node = make_number('D');  /* D = dequeue */
         (yyval.node) = make_node(AST_ADT_OP, id, NULL, op_node);
       }
-#line 1698 "src/parser/simpl.tab.c"
+#line 1700 "src/parser/simpl.tab.c"
     break;
 
   case 38: /* adt_operation: INSERT IDENTIFIER expression  */
-#line 205 "src/parser/simpl.y"
+#line 207 "src/parser/simpl.y"
       {
         ASTNode *id = make_identifier((yyvsp[-1].str));
         ASTNode *op_node = make_number('I');  /* I = insert */
         (yyval.node) = make_node(AST_ADT_OP, id, (yyvsp[0].node), op_node);
       }
-#line 1708 "src/parser/simpl.tab.c"
+#line 1710 "src/parser/simpl.tab.c"
     break;
 
   case 39: /* adt_operation: REMOVE IDENTIFIER expression  */
-#line 211 "src/parser/simpl.y"
+#line 213 "src/parser/simpl.y"
       {
         ASTNode *id = make_identifier((yyvsp[-1].str));
         ASTNode *op_node = make_number('R');  /* R = remove */
         (yyval.node) = make_node(AST_ADT_OP, id, (yyvsp[0].node), op_node);
       }
-#line 1718 "src/parser/simpl.tab.c"
+#line 1720 "src/parser/simpl.tab.c"
     break;
 
   case 40: /* adt_operation: ADD_EDGE IDENTIFIER expression expression  */
-#line 217 "src/parser/simpl.y"
+#line 219 "src/parser/simpl.y"
       {
         ASTNode *id = make_identifier((yyvsp[-2].str));
         ASTNode *op_node = make_number('A');  /* A = add_edge */
         ASTNode *args = make_node(AST_BINOP, (yyvsp[-1].node), (yyvsp[0].node), NULL);
         (yyval.node) = make_node(AST_ADT_OP, id, args, op_node);
       }
-#line 1729 "src/parser/simpl.tab.c"
+#line 1731 "src/parser/simpl.tab.c"
     break;
 
   case 41: /* adt_operation: REMOVE_EDGE IDENTIFIER expression expression  */
-#line 224 "src/parser/simpl.y"
+#line 226 "src/parser/simpl.y"
       {
         ASTNode *id = make_identifier((yyvsp[-2].str));
         ASTNode *op_node = make_number('X');  /* X = remove_edge */
         ASTNode *args = make_node(AST_BINOP, (yyvsp[-1].node), (yyvsp[0].node), NULL);
         (yyval.node) = make_node(AST_ADT_OP, id, args, op_node);
       }
-#line 1740 "src/parser/simpl.tab.c"
+#line 1742 "src/parser/simpl.tab.c"
     break;
 
 
-#line 1744 "src/parser/simpl.tab.c"
+#line 1746 "src/parser/simpl.tab.c"
 
       default: break;
     }
@@ -1964,35 +1966,9 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 232 "src/parser/simpl.y"
+#line 234 "src/parser/simpl.y"
 
 
 void yyerror(const char *s) {
     fprintf(stderr, "Syntax error: %s\n", s);
-}
-
-int main(void) {
-    int parse_result = yyparse();
-
-    if (parse_result != 0) {
-        return 1;
-    }
-
-    printf("Parsing successful.\n\n");
-
-    /* Perform semantic analysis with all features enabled */
-    SemanticResult result = semantic_check(ast_root);
-
-    if (result.error_count > 0) {
-        fprintf(stderr, "\nCompilation failed with %d error(s).\n", result.error_count);
-        return 1;
-    }
-
-    printf("\nCompilation successful!\n");
-    printf("  - ADT safety: verified\n");
-    printf("  - State tracking: complete\n");
-    if (result.optimizations_applied > 0) {
-        printf("  - Optimizations detected: %d\n", result.optimizations_applied);
-    }
-    return 0;
 }

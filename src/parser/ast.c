@@ -18,6 +18,7 @@ ASTNode *make_node(ASTNodeType type,
     n->name = NULL;
     n->value = 0;
     n->op = 0;
+    n->inferred_type = TYPE_UNKNOWN;
     return n;
 }
 

@@ -16,7 +16,6 @@ void yyerror(const char *s);
     struct ASTNode *node;
 }
 
-
 /* ---------- Core Keywords ---------- */
 %token LET SET BE TO
 %token IF THEN ELSE END
@@ -54,7 +53,10 @@ void yyerror(const char *s);
 /* ---------- Program ---------- */
 
 program
-    : statement_list { ast_root = $$ = make_node(AST_PROGRAM, $1, NULL, NULL); }
+    : statement_list
+      {
+          ast_root = make_node(AST_PROGRAM, $1, NULL, NULL);
+      }
     ;
 
 statement_list
@@ -233,30 +235,4 @@ adt_operation
 
 void yyerror(const char *s) {
     fprintf(stderr, "Syntax error: %s\n", s);
-}
-
-int main(void) {
-    int parse_result = yyparse();
-
-    if (parse_result != 0) {
-        return 1;
-    }
-
-    printf("Parsing successful.\n\n");
-
-    /* Perform semantic analysis with all features enabled */
-    SemanticResult result = semantic_check(ast_root);
-
-    if (result.error_count > 0) {
-        fprintf(stderr, "\nCompilation failed with %d error(s).\n", result.error_count);
-        return 1;
-    }
-
-    printf("\nCompilation successful!\n");
-    printf("  - ADT safety: verified\n");
-    printf("  - State tracking: complete\n");
-    if (result.optimizations_applied > 0) {
-        printf("  - Optimizations detected: %d\n", result.optimizations_applied);
-    }
-    return 0;
 }
