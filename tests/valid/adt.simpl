@@ -1,0 +1,7 @@
+let s be stack
+push s 10
+push s 20
+pop s
+
+let g be graph
+add_edge g 1 2

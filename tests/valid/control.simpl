@@ -1,0 +1,5 @@
+let x be 3
+while x > 0 do
+    print x
+    set x to x - 1
+end

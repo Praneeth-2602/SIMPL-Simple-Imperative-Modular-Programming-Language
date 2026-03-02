@@ -1,0 +1,3 @@
+let x be 10
+while x > 0 do
+    print x

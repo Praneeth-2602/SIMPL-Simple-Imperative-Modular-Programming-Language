@@ -1,0 +1,43 @@
+# ---- Primitive Declarations ----
+let x be 10
+let y be 5
+
+# ---- Arithmetic ----
+set x to x + y * 2
+print x
+
+# ---- Reassignment ----
+set y to x - 3
+print y
+
+# ---- Condition ----
+if x > y then
+    print x
+else
+    print y
+end
+
+# ---- Loop ----
+while y > 0 do
+    set y to y - 1
+end
+
+# ---- Stack ----
+let s be stack
+push s 10
+push s 20
+pop s
+print s
+
+# ---- Queue ----
+let q be queue
+enqueue q 5
+enqueue q 7
+dequeue q
+print q
+
+# ---- Graph ----
+let g be graph
+add_edge g 1 2
+remove_edge g 1 2
+print g
