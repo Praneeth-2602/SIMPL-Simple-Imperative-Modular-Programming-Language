@@ -474,7 +474,14 @@ static void check_node(ASTNode *node) {
             simulate_adt_operation(node);
 
             if (node->right) {
-                if (node->right->type == AST_BINOP) {
+                /* Graph operations carry two expressions in a dummy BINOP node; check both arms. */
+                if (op_code == OP_ADD_EDGE || op_code == OP_REMOVE_EDGE) {
+                    Type left_arg = check_expression_type(node->right->left);
+                    Type right_arg = check_expression_type(node->right->right);
+                    if (left_arg != TYPE_INT || right_arg != TYPE_INT) {
+                        semantic_error("ADT operation arguments must be integers", NULL);
+                    }
+                } else if (node->right->type == AST_BINOP) {
                     Type t = check_expression_type(node->right);
                     if (t != TYPE_INT) {
                         semantic_error("ADT operation arguments must be integers", NULL);
