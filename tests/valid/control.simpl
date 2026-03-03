@@ -1,5 +1,8 @@
-let x be 3
+let x be 10
 while x > 0 do
-    print x
-    set x to x - 1
+    if x > 5 then
+        set x to x - 2
+    else
+        set x to x - 1
+    end
 end
