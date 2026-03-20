@@ -4,6 +4,7 @@
 #include "../parser/ast.h"
 
 typedef enum {
+    IR_NOP,
     IR_ASSIGN,
     IR_ADD,
     IR_SUB,
@@ -26,11 +27,13 @@ typedef struct IRInstruction {
     /* Used only for IR_CMP to encode the relational operator (>, <, =, !). */
     char cmp_op;
 
+    struct IRInstruction *prev;
     struct IRInstruction *next;
 } IRInstruction;
 
 /* IR API */
 IRInstruction* generate_ir(ASTNode *root);
 void print_ir(IRInstruction *head);
+void print_ir_instruction(IRInstruction *inst);
 
 #endif

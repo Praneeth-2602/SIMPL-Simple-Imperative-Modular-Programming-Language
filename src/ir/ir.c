@@ -28,11 +28,12 @@ static void emit(IROp op, const char *res, const char *a1, const char *a2) {
     IRInstruction *inst = malloc(sizeof(IRInstruction));
     inst->op = op;
 
-    strcpy(inst->result, res ? res : "");
-    strcpy(inst->arg1, a1 ? a1 : "");
-    strcpy(inst->arg2, a2 ? a2 : "");
+    snprintf(inst->result, sizeof(inst->result), "%s", res ? res : "");
+    snprintf(inst->arg1, sizeof(inst->arg1), "%s", a1 ? a1 : "");
+    snprintf(inst->arg2, sizeof(inst->arg2), "%s", a2 ? a2 : "");
     inst->cmp_op = 0;
 
+    inst->prev = ir_tail;
     inst->next = NULL;
 
     if (!ir_head) {
@@ -79,8 +80,9 @@ static void generate_node(ASTNode *root) {
     }
 
     else if (root->type == AST_DECL) {
-        /* Declaration has no runtime effect in this IR. */
-        return;
+        /* Integer declarations in SIMPL carry an initializer. */
+        char *rhs = generate_expr(root->right);
+        emit(IR_ASSIGN, root->left->name, rhs, NULL);
     }
 
     else if (root->type == AST_ASSIGN) {
@@ -170,53 +172,62 @@ static char* generate_expr(ASTNode *node) {
 }
 
 /* Pretty print IR */
+void print_ir_instruction(IRInstruction *curr) {
+    if (!curr) return;
+
+    switch (curr->op) {
+        case IR_NOP:
+            break;
+
+        case IR_ASSIGN:
+            printf("%s = %s\n", curr->result, curr->arg1);
+            break;
+
+        case IR_ADD:
+            printf("%s = %s + %s\n", curr->result, curr->arg1, curr->arg2);
+            break;
+
+        case IR_SUB:
+            printf("%s = %s - %s\n", curr->result, curr->arg1, curr->arg2);
+            break;
+
+        case IR_MUL:
+            printf("%s = %s * %s\n", curr->result, curr->arg1, curr->arg2);
+            break;
+
+        case IR_DIV:
+            printf("%s = %s / %s\n", curr->result, curr->arg1, curr->arg2);
+            break;
+
+        case IR_PRINT:
+            printf("print %s\n", curr->result);
+            break;
+
+        case IR_LABEL:
+            printf("%s:\n", curr->result);
+            break;
+
+        case IR_GOTO:
+            printf("goto %s\n", curr->result);
+            break;
+
+        case IR_IF_FALSE_GOTO:
+            printf("if_false %s goto %s\n", curr->arg1, curr->result);
+            break;
+
+        case IR_CMP:
+            printf("%s = %s %c %s\n", curr->result, curr->arg1, curr->cmp_op, curr->arg2);
+            break;
+    }
+}
+
 void print_ir(IRInstruction *head) {
     IRInstruction *curr = head;
 
     while (curr) {
-
-        switch (curr->op) {
-            case IR_ASSIGN:
-                printf("%s = %s\n", curr->result, curr->arg1);
-                break;
-
-            case IR_ADD:
-                printf("%s = %s + %s\n", curr->result, curr->arg1, curr->arg2);
-                break;
-
-            case IR_SUB:
-                printf("%s = %s - %s\n", curr->result, curr->arg1, curr->arg2);
-                break;
-
-            case IR_MUL:
-                printf("%s = %s * %s\n", curr->result, curr->arg1, curr->arg2);
-                break;
-
-            case IR_DIV:
-                printf("%s = %s / %s\n", curr->result, curr->arg1, curr->arg2);
-                break;
-
-            case IR_PRINT:
-                printf("print %s\n", curr->result);
-                break;
-
-            case IR_LABEL:
-                printf("%s:\n", curr->result);
-                break;
-
-            case IR_GOTO:
-                printf("goto %s\n", curr->result);
-                break;
-
-            case IR_IF_FALSE_GOTO:
-                printf("if_false %s goto %s\n", curr->arg1, curr->result);
-                break;
-
-            case IR_CMP:
-                printf("%s = %s %c %s\n", curr->result, curr->arg1, curr->cmp_op, curr->arg2);
-                break;
+        if (curr->op != IR_NOP) {
+            print_ir_instruction(curr);
         }
-
         curr = curr->next;
     }
 }
