@@ -132,6 +132,8 @@ assignment
 print_stmt
     : PRINT expression
       { $$ = make_node(AST_PRINT, $2, NULL, NULL); }
+    | PRINT IDENTIFIER
+      { $$ = make_node(AST_PRINT, make_identifier($2), NULL, NULL); }
     ;
 
 /* ---------- Control Flow ---------- */
