@@ -5,6 +5,8 @@
 #include <stdio.h>
 %}
 
+%option noinput nounput noyywrap
+
 DIGIT      [0-9]
 LETTER     [a-zA-Z_]
 ID         {LETTER}({LETTER}|{DIGIT})*
@@ -71,7 +73,3 @@ NUMBER     {DIGIT}+
     printf("Lexical error: unknown character '%s'\n", yytext);
 }
 %%
-
-int yywrap(void) {
-    return 1;
-}
