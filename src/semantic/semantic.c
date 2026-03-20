@@ -77,11 +77,6 @@ static Type adt_code_to_type(int code) {
     }
 }
 
-static int is_adt_type(Type t) {
-    return t == TYPE_STACK || t == TYPE_QUEUE || 
-           t == TYPE_TREE || t == TYPE_GRAPH;
-}
-
 static int is_valid_adt_op(int op_code, Type type) {
     switch (op_code) {
         case OP_PUSH:
