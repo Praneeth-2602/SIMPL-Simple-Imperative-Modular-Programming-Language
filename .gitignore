@@ -8,3 +8,4 @@
 src/lexer/lex.yy.c
 src/parser/simpl.tab.c
 src/parser/simpl.tab.h
+simpl.exe
