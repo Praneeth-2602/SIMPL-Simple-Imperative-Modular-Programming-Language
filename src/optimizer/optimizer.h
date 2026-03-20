@@ -2,31 +2,47 @@
 #define OPTIMIZER_H
 
 #include "../ir/ir.h"
+#include "../semantic/semantic.h"
 
 /* ============================================================
- * SIMPL Optimizer
+ * SIMPL Optimizer — v2
  * ============================================================
  *
- * Pass 1: Constant Folding
- *   Evaluates constant arithmetic/comparison expressions
- *   at compile time and replaces them with literal values.
- *   Example:  t0 = 5 + 3   →   t0 = 8
+ * v1 passes (retained):
+ *   Pass 1 — Constant Folding + Propagation + Branch Simplification
+ *   Pass 2 — Dead Code Elimination (global liveness, inter-block)
+ *   Pass 3 — Unreachable Block Elimination
  *
- * Pass 2: Dead Code Elimination (DCE)
- *   Removes IR instructions whose result is never used.
- *   Operates within each basic block using a backward
- *   liveness scan.
- *   Example:  t1 = a + b   (t1 never read)  →  <deleted>
+ * v2 passes (new):
+ *   Pass 4 — Copy Propagation
+ *     Tracks assignments of the form  x = y  (copy of a variable).
+ *     Replaces downstream uses of x with y directly, collapsing
+ *     unnecessary copy chains.
+ *     Example:
+ *       t0 = x        →   (eliminated)
+ *       t1 = t0 + 1   →   t1 = x + 1
  *
- * Pass 3: Unreachable Block Elimination
- *   Uses the CFG to identify blocks with no predecessors
- *   (other than the entry block) and removes all instructions
- *   inside them.
+ *   Pass 5 — Common Subexpression Elimination (CSE)
+ *     Within each basic block, tracks every computation seen so far.
+ *     If the same (op, arg1, arg2) tuple is computed again and its
+ *     result is still available (not overwritten), the second
+ *     instruction is replaced with a copy from the first result.
+ *     Example:
+ *       t0 = x + y    (first occurrence — kept)
+ *       t1 = x + y    →   t1 = t0   (redundant — replaced)
  *
- * All passes are non-destructive to the original IR list
- * structure — they mark instructions as dead (is_dead = 1)
- * rather than freeing memory, so the pipeline can still
- * inspect or print the original IR for debugging.
+ *   Adaptive Optimization Engine:
+ *     Uses the SemanticReport metrics to decide which passes to run
+ *     and in what order, rather than blindly executing all of them.
+ *     Decision logic:
+ *       constant-heavy  → prioritize folding + propagation
+ *       loop-heavy      → prioritize DCE + CSE (most benefit in loops)
+ *       ADT-heavy       → skip CSE (ADT ops not eligible anyway)
+ *       small program   → skip inter-block analysis overhead
+ *
+ * All passes are non-destructive: dead instructions are flagged
+ * via is_dead() rather than freed, so the IR list stays intact
+ * for debugging and the codegen can inspect both versions.
  * ============================================================ */
 
 /* ── Basic Block ─────────────────────────────────────────── */
@@ -39,18 +55,15 @@
 typedef struct BasicBlock {
     int id;
 
-    /* Pointers into the flat IR linked list */
     IRInstruction *first;
     IRInstruction *last;
 
-    /* CFG edges */
     struct BasicBlock *successors[MAX_SUCCESSORS];
     int succ_count;
 
     struct BasicBlock *predecessors[MAX_PREDECESSORS];
     int pred_count;
 
-    /* Set by unreachable-block elimination */
     int is_reachable;
 } BasicBlock;
 
@@ -64,46 +77,50 @@ typedef struct {
 /* ── Optimization report ─────────────────────────────────── */
 
 typedef struct {
-    int constants_folded;      /* instructions simplified by constant folding */
-    int dead_instrs_removed;   /* instructions removed by DCE                 */
-    int unreachable_blocks;    /* blocks eliminated as unreachable             */
+    /* v1 */
+    int constants_folded;
+    int dead_instrs_removed;
+    int unreachable_blocks;
+
+    /* v2 */
+    int copies_propagated;       /* Pass 4 — Copy Propagation   */
+    int cse_eliminated;          /* Pass 5 — CSE                */
+
+    /* Adaptive engine decisions */
+    int passes_run;              /* bitmask — which passes fired */
 } OptReport;
+
+/* Bitmask values for passes_run */
+#define OPT_PASS_CONST_FOLD   (1 << 0)
+#define OPT_PASS_DCE          (1 << 1)
+#define OPT_PASS_UNREACHABLE  (1 << 2)
+#define OPT_PASS_COPY_PROP    (1 << 3)
+#define OPT_PASS_CSE          (1 << 4)
 
 /* ── Public API ──────────────────────────────────────────── */
 
-/* Build basic blocks and CFG from a flat IR list. */
 CFG *build_cfg(IRInstruction *ir_head);
 
-/* Pass 1 — Constant Folding.
- * Walks every instruction in ir_head and folds constant
- * arithmetic/comparison operands in-place.
- * Returns the number of instructions folded. */
-int  constant_folding(IRInstruction *ir_head);
+/* v1 passes */
+int constant_folding(IRInstruction *ir_head);
+int dead_code_elimination(CFG *cfg);
+int unreachable_block_elimination(CFG *cfg);
 
-/* Pass 2 — Dead Code Elimination.
- * Marks dead instructions (is_dead = 1) inside each block.
- * Returns the number of instructions marked dead. */
-int  dead_code_elimination(CFG *cfg);
+/* v2 passes */
+int copy_propagation(IRInstruction *ir_head);
+int cse(CFG *cfg);
 
-/* Pass 3 — Unreachable Block Elimination.
- * Marks unreachable blocks and their instructions dead.
- * Returns the number of blocks eliminated. */
-int  unreachable_block_elimination(CFG *cfg);
-
-/* Run all three passes in order and return a combined report. */
+/* Adaptive engine — main entry point for v2.
+ * Takes the SemanticReport so it can make data-driven decisions. */
 OptReport run_optimizer(IRInstruction *ir_head);
+OptReport run_optimizer_adaptive(IRInstruction *ir_head,
+                                  const SemanticReport *sem);
 
-/* Print the optimized IR (skipping dead instructions). */
 void print_optimized_ir(IRInstruction *ir_head);
-
-/* Print CFG structure (for debugging). */
+void print_opt_report(const OptReport *r);
 void print_cfg(CFG *cfg);
-
-/* Free CFG memory. */
 void free_cfg(CFG *cfg);
 
-/* Query whether an instruction was marked dead by any optimizer pass.
- * Used by the code generator to skip dead instructions. */
 int is_dead(IRInstruction *inst);
 
 #endif /* OPTIMIZER_H */

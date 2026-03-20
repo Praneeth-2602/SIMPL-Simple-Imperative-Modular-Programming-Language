@@ -98,11 +98,27 @@ static const char *instr_defines(IRInstruction *inst) {
 /* Is this a "side-effect" instruction that must never be removed
  * even if its result is unused? */
 static int has_side_effect(IRInstruction *inst) {
-    return (inst->op == IR_PRINT      ||
-            inst->op == IR_GOTO       ||
-            inst->op == IR_IF_FALSE_GOTO ||
-            inst->op == IR_LABEL);
+    switch (inst->op) {
+        case IR_PRINT:
+        case IR_GOTO:
+        case IR_IF_FALSE_GOTO:
+        case IR_LABEL:
+        case IR_ADT_DECL:
+        case IR_STACK_PUSH:
+        case IR_STACK_POP:
+        case IR_QUEUE_ENQUEUE:
+        case IR_QUEUE_DEQUEUE:
+        case IR_TREE_INSERT:
+        case IR_TREE_REMOVE:
+        case IR_GRAPH_ADD_EDGE:
+        case IR_GRAPH_REMOVE_EDGE:
+        case IR_PRINT_ADT:
+            return 1;
+        default:
+            return 0;
+    }
 }
+
 
 /* Find the label string that a GOTO / IF_FALSE_GOTO targets. */
 typedef struct {
@@ -835,53 +851,7 @@ int unreachable_block_elimination(CFG *cfg) {
 }
 
 /* ============================================================
- * SECTION 7 — MASTER DRIVER
- * ============================================================ */
-
-OptReport run_optimizer(IRInstruction *ir_head) {
-    OptReport report = {0, 0, 0};
-    if (!ir_head) return report;
-
-    printf("\n=== SIMPL Optimizer ===\n");
-
-    while (1) {
-        int changed = 0;
-        changed += constant_propagation(ir_head);
-        changed += constant_folding(ir_head);
-        changed += simplify_constant_branches(ir_head);
-        report.constants_folded += changed;
-        if (changed == 0) break;
-    }
-
-    /* Build CFG after rewriting the IR so blocks/edges see the simplified flow. */
-    CFG *cfg = build_cfg(ir_head);
-    if (!cfg) {
-        fprintf(stderr, "[OPT] Failed to build CFG.\n");
-        return report;
-    }
-
-    /* Pass 1: Constant propagation + folding + branch simplification */
-    printf("[Pass 1] Constant Simplify     : %d instruction(s) simplified\n",
-           report.constants_folded);
-
-    /* Pass 2: DCE (run AFTER folding so newly-constant temps are visible) */
-    report.dead_instrs_removed = dead_code_elimination(cfg);
-    printf("[Pass 2] Dead Code Elimination : %d instruction(s) removed\n",
-           report.dead_instrs_removed);
-
-    /* Pass 3: Unreachable Block Elimination */
-    report.unreachable_blocks = unreachable_block_elimination(cfg);
-    printf("[Pass 3] Unreachable Blocks    : %d block(s) eliminated\n",
-           report.unreachable_blocks);
-
-    printf("=======================\n");
-
-    free_cfg(cfg);
-    return report;
-}
-
-/* ============================================================
- * SECTION 8 — OUTPUT & DEBUGGING HELPERS
+ * SECTION 7 —  OUTPUT & DEBUGGING HELPERS
  * ============================================================ */
 
 void print_optimized_ir(IRInstruction *ir_head) {
@@ -939,4 +909,475 @@ void free_cfg(CFG *cfg) {
         free(cfg->blocks[i]);
     }
     free(cfg);
+}
+
+/* ============================================================
+ * SECTION 9 — PASS 4: COPY PROPAGATION
+ *
+ * Tracks assignments of the form  dst = src  where src is a
+ * variable or temp (not a literal — that's constant propagation).
+ * Replaces later uses of dst with src directly, eliminating the
+ * copy chain.
+ *
+ * Algorithm (single forward pass, restarted until stable):
+ *   copies = {}
+ *   for each instruction I:
+ *     if I is a LABEL or branch:
+ *         clear copies  (can't track across blocks safely)
+ *     replace any operand in I that maps through copies
+ *     if I is  dst = src  (IR_ASSIGN, src is non-literal):
+ *         copies[dst] = src
+ *     else if I defines dst:
+ *         kill copies where dst appears as src or as key
+ *
+ * Example:
+ *   t0 = x          copies: {t0→x}
+ *   t1 = t0 + 1  →  t1 = x + 1   (t0 replaced by x)
+ *   t2 = t1         copies: {t0→x, t2→t1}
+ *   print t2     →  print t1      (t2 replaced by t1)
+ * ============================================================ */
+
+#define COPY_TABLE_SIZE 128
+
+typedef struct {
+    char dst[32];
+    char src[32];
+} CopyEntry;
+
+typedef struct {
+    CopyEntry entries[COPY_TABLE_SIZE];
+    int       count;
+} CopyTable;
+
+static void copy_table_clear(CopyTable *t) { t->count = 0; }
+
+static int copy_table_find(CopyTable *t, const char *dst) {
+    for (int i = 0; i < t->count; i++)
+        if (strcmp(t->entries[i].dst, dst) == 0) return i;
+    return -1;
+}
+
+static const char *copy_table_get(CopyTable *t, const char *dst) {
+    int i = copy_table_find(t, dst);
+    return i >= 0 ? t->entries[i].src : NULL;
+}
+
+static void copy_table_set(CopyTable *t, const char *dst, const char *src) {
+    if (!dst || !*dst || !src || !*src) return;
+    if (is_constant(src)) return;  /* literals → constant propagation's job */
+    int i = copy_table_find(t, dst);
+    if (i < 0) {
+        if (t->count >= COPY_TABLE_SIZE) return;
+        i = t->count++;
+    }
+    strncpy(t->entries[i].dst, dst, 31);
+    strncpy(t->entries[i].src, src, 31);
+    t->entries[i].dst[31] = t->entries[i].src[31] = '\0';
+}
+
+/* Kill all copies where `name` appears as dst OR src
+ * (if src is overwritten, the copy is no longer valid). */
+static void copy_table_kill(CopyTable *t, const char *name) {
+    for (int i = t->count - 1; i >= 0; i--) {
+        if (strcmp(t->entries[i].dst, name) == 0 ||
+            strcmp(t->entries[i].src, name) == 0) {
+            /* Remove by swapping with last */
+            t->entries[i] = t->entries[--t->count];
+        }
+    }
+}
+
+/* Replace operand in-place if a copy is known. Returns 1 if changed. */
+static int cp_replace(CopyTable *t, char *operand) {
+    if (!operand || !*operand || is_constant(operand)) return 0;
+    const char *repl = copy_table_get(t, operand);
+    if (!repl) return 0;
+    strncpy(operand, repl, 31);
+    operand[31] = '\0';
+    return 1;
+}
+
+int copy_propagation(IRInstruction *ir_head) {
+    int total = 0;
+    int changed;
+
+    do {
+        CopyTable t;
+        copy_table_clear(&t);
+        changed = 0;
+
+        for (IRInstruction *inst = ir_head; inst; inst = inst->next) {
+            if (is_dead(inst) || inst->op == IR_NOP) continue;
+
+            /* Block boundaries invalidate copy info */
+            if (inst->op == IR_LABEL || inst->op == IR_GOTO ||
+                inst->op == IR_IF_FALSE_GOTO) {
+                copy_table_clear(&t);
+                /* For conditional branch, still try to replace its cond */
+                if (inst->op == IR_IF_FALSE_GOTO)
+                    changed += cp_replace(&t, inst->arg1);
+                continue;
+            }
+
+            /* Replace operands first, then update the table */
+            switch (inst->op) {
+                case IR_ASSIGN:
+                    changed += cp_replace(&t, inst->arg1);
+                    /* Kill anything defined by this dst */
+                    copy_table_kill(&t, inst->result);
+                    /* Record copy only if src is a non-literal name */
+                    if (!is_constant(inst->arg1))
+                        copy_table_set(&t, inst->result, inst->arg1);
+                    break;
+
+                case IR_ADD: case IR_SUB:
+                case IR_MUL: case IR_DIV: case IR_CMP:
+                    changed += cp_replace(&t, inst->arg1);
+                    changed += cp_replace(&t, inst->arg2);
+                    copy_table_kill(&t, inst->result);
+                    break;
+
+                case IR_PRINT:
+                    changed += cp_replace(&t, inst->result);
+                    break;
+
+                case IR_STACK_PUSH: case IR_QUEUE_ENQUEUE:
+                case IR_TREE_INSERT: case IR_TREE_REMOVE:
+                    changed += cp_replace(&t, inst->arg1);
+                    break;
+
+                case IR_GRAPH_ADD_EDGE: case IR_GRAPH_REMOVE_EDGE:
+                    changed += cp_replace(&t, inst->arg1);
+                    changed += cp_replace(&t, inst->arg2);
+                    break;
+
+                default:
+                    break;
+            }
+        }
+        total += changed;
+    } while (changed > 0);
+
+    return total;
+}
+
+/* ============================================================
+ * SECTION 10 — PASS 5: COMMON SUBEXPRESSION ELIMINATION (CSE)
+ *
+ * Within each basic block, tracks every arithmetic/comparison
+ * expression computed so far as a (op, arg1, arg2) tuple.
+ * If the same expression appears again AND the result variable
+ * from the first computation has not been overwritten since,
+ * replace the second instruction with a copy:
+ *
+ *   t0 = x + y        ← first occurrence, record (ADD, x, y) → t0
+ *   ...               ← neither x, y, nor t0 are redefined
+ *   t3 = x + y   →   t3 = t0   ← redundant, replaced with copy
+ *
+ * Commutative operators (+, *) are matched regardless of arg order.
+ *
+ * After replacing, the copy is immediately eligible for Copy
+ * Propagation on the next overall iteration.
+ * ============================================================ */
+
+#define CSE_TABLE_SIZE 128
+
+typedef struct {
+    IROp   op;
+    char   arg1[32];
+    char   arg2[32];
+    char   result[32];   /* the temp that holds this expr's value */
+} CSEEntry;
+
+typedef struct {
+    CSEEntry entries[CSE_TABLE_SIZE];
+    int      count;
+} CSETable;
+
+static void cse_table_clear(CSETable *t) { t->count = 0; }
+
+static int cse_exprs_match(const CSEEntry *e, IROp op,
+                            const char *a1, const char *a2) {
+    if (e->op != op) return 0;
+    /* Direct match */
+    if (strcmp(e->arg1, a1) == 0 && strcmp(e->arg2, a2) == 0) return 1;
+    /* Commutative: + and * */
+    if (op == IR_ADD || op == IR_MUL)
+        if (strcmp(e->arg1, a2) == 0 && strcmp(e->arg2, a1) == 0) return 1;
+    return 0;
+}
+
+static const char *cse_table_lookup(CSETable *t, IROp op,
+                                     const char *a1, const char *a2) {
+    for (int i = 0; i < t->count; i++)
+        if (cse_exprs_match(&t->entries[i], op, a1, a2))
+            return t->entries[i].result;
+    return NULL;
+}
+
+static void cse_table_add(CSETable *t, IROp op,
+                           const char *a1, const char *a2,
+                           const char *result) {
+    if (t->count >= CSE_TABLE_SIZE) return;
+    CSEEntry *e = &t->entries[t->count++];
+    e->op = op;
+    strncpy(e->arg1,   a1,     31); e->arg1[31]   = '\0';
+    strncpy(e->arg2,   a2,     31); e->arg2[31]   = '\0';
+    strncpy(e->result, result, 31); e->result[31] = '\0';
+}
+
+/* Kill all CSE entries that use `name` as an operand or result.
+ * Called when a variable is overwritten. */
+static void cse_table_kill(CSETable *t, const char *name) {
+    for (int i = t->count - 1; i >= 0; i--) {
+        if (strcmp(t->entries[i].result, name) == 0 ||
+            strcmp(t->entries[i].arg1,   name) == 0 ||
+            strcmp(t->entries[i].arg2,   name) == 0) {
+            t->entries[i] = t->entries[--t->count];
+        }
+    }
+}
+
+static int is_cse_eligible(IROp op) {
+    return op == IR_ADD || op == IR_SUB ||
+           op == IR_MUL || op == IR_DIV || op == IR_CMP;
+}
+
+static int cse_block(BasicBlock *b) {
+    CSETable t;
+    cse_table_clear(&t);
+    int eliminated = 0;
+
+    IRInstruction *inst = b->first;
+    while (inst) {
+        if (is_dead(inst) || inst->op == IR_NOP) {
+            if (inst == b->last) break;
+            inst = inst->next;
+            continue;
+        }
+
+        if (is_cse_eligible(inst->op)) {
+            const char *prior = cse_table_lookup(&t, inst->op,
+                                                  inst->arg1, inst->arg2);
+            if (prior) {
+                /* Replace with copy from prior result */
+                inst->op = IR_ASSIGN;
+                strncpy(inst->arg1, prior, sizeof(inst->arg1) - 1);
+                inst->arg1[sizeof(inst->arg1) - 1] = '\0';
+                inst->arg2[0] = '\0';
+                inst->cmp_op  = 0;
+                /* The result variable is now a copy — kill stale CSE entries
+                 * that depended on the old computation's result name. */
+                cse_table_kill(&t, inst->result);
+                eliminated++;
+            } else {
+                /* First occurrence — record in table */
+                cse_table_add(&t, inst->op, inst->arg1, inst->arg2,
+                               inst->result);
+            }
+        } else {
+            /* Any instruction that defines a variable kills CSE entries
+             * that used that variable as an operand. */
+            const char *def = instr_defines(inst);
+            if (def && *def) cse_table_kill(&t, def);
+        }
+
+        if (inst == b->last) break;
+        inst = inst->next;
+    }
+    return eliminated;
+}
+
+int cse(CFG *cfg) {
+    if (!cfg) return 0;
+    int total = 0;
+    for (int i = 0; i < cfg->count; i++) {
+        BasicBlock *b = cfg->blocks[i];
+        if (b->is_reachable)
+            total += cse_block(b);
+    }
+    return total;
+}
+
+/* ============================================================
+ * SECTION 11 — ADAPTIVE OPTIMIZATION ENGINE
+ *
+ * Instead of running every pass unconditionally, the engine
+ * analyses the SemanticReport and selects the most beneficial
+ * passes for the specific program being compiled.
+ *
+ * Decision table:
+ * ┌─────────────────────────┬──────────────────────────────────┐
+ * │ Program characteristic  │ Action                           │
+ * ├─────────────────────────┼──────────────────────────────────┤
+ * │ constant_exprs > 0      │ Run constant folding/propagation │
+ * │ max_loop_depth > 0      │ Run DCE + CSE (loops amplify     │
+ * │                         │ benefit of both)                 │
+ * │ arithmetic_ops > 4      │ Run CSE (enough ops to find      │
+ * │                         │ common subexpressions)           │
+ * │ assignment_count > 2    │ Run copy propagation             │
+ * │ adt_ops > arithmetic_   │ Skip CSE (ADT-dominated program, │
+ * │   ops                   │ little arithmetic to share)      │
+ * │ total instrs < 10       │ Skip inter-block DCE overhead    │
+ * └─────────────────────────┴──────────────────────────────────┘
+ *
+ * The engine always runs at least one constant-folding pass and
+ * DCE regardless, since they have negligible overhead.
+ * ============================================================ */
+
+static int count_ir_instrs(IRInstruction *ir) {
+    int n = 0;
+    for (IRInstruction *i = ir; i; i = i->next) n++;
+    return n;
+}
+
+OptReport run_optimizer_adaptive(IRInstruction *ir_head,
+                                  const SemanticReport *sem) {
+    OptReport report;
+    memset(&report, 0, sizeof(report));
+    if (!ir_head) return report;
+
+    /* ── Analyse program characteristics ── */
+    int total_instrs   = count_ir_instrs(ir_head);
+    int constant_heavy = sem->constant_exprs > 0;
+    int loop_heavy     = sem->max_loop_depth > 0;
+    int arith_heavy    = sem->arithmetic_ops > 4;
+    int copy_worthy    = sem->assignment_count > 2;
+    int adt_dominated  = sem->adt_ops > sem->arithmetic_ops;
+    int small_program  = total_instrs < 10;
+
+    printf("\n=== SIMPL Adaptive Optimizer (v2) ===\n");
+    printf("Program profile:\n");
+    printf("  Instructions : %d\n", total_instrs);
+    printf("  Loop depth   : %d\n", sem->max_loop_depth);
+    printf("  Arith ops    : %d\n", sem->arithmetic_ops);
+    printf("  Const exprs  : %d\n", sem->constant_exprs);
+    printf("  Assignments  : %d\n", sem->assignment_count);
+    printf("  ADT ops      : %d\n", sem->adt_ops);
+    printf("\nPass selection:\n");
+
+    /* ── Pass 1: Constant Folding + Propagation (always run) ── */
+    printf("  [PASS 1] Constant folding/propagation  → ALWAYS\n");
+    {
+        int changed;
+        do {
+            changed  = constant_propagation(ir_head);
+            changed += constant_folding(ir_head);
+            changed += simplify_constant_branches(ir_head);
+            report.constants_folded += changed;
+        } while (changed > 0);
+    }
+    report.passes_run |= OPT_PASS_CONST_FOLD;
+
+    /* ── Pass 4: Copy Propagation ── */
+    if (copy_worthy || constant_heavy) {
+        printf("  [PASS 4] Copy propagation              → YES"
+               " (assignments=%d)\n", sem->assignment_count);
+        report.copies_propagated = copy_propagation(ir_head);
+        report.passes_run |= OPT_PASS_COPY_PROP;
+        /* Re-fold after copy prop may expose new constants */
+        {
+            int changed;
+            do {
+                changed  = constant_folding(ir_head);
+                changed += constant_propagation(ir_head);
+                report.constants_folded += changed;
+            } while (changed > 0);
+        }
+    } else {
+        printf("  [PASS 4] Copy propagation              → SKIPPED"
+               " (few assignments)\n");
+    }
+
+    /* ── Build CFG (needed for block-level passes) ── */
+    CFG *cfg = build_cfg(ir_head);
+    if (!cfg) {
+        fprintf(stderr, "[OPT] Failed to build CFG.\n");
+        return report;
+    }
+
+    /* ── Pass 5: CSE ── */
+    if (!adt_dominated && (arith_heavy || loop_heavy)) {
+        printf("  [PASS 5] Common subexpr elimination    → YES"
+               " (arith=%d, loops=%d)\n",
+               sem->arithmetic_ops, sem->max_loop_depth);
+        report.cse_eliminated = cse(cfg);
+        report.passes_run |= OPT_PASS_CSE;
+        /* CSE introduces copies — run copy prop again */
+        if (report.cse_eliminated > 0) {
+            report.copies_propagated += copy_propagation(ir_head);
+            /* And fold again */
+            int changed;
+            do {
+                changed = constant_folding(ir_head);
+                report.constants_folded += changed;
+            } while (changed > 0);
+        }
+    } else {
+        printf("  [PASS 5] Common subexpr elimination    → SKIPPED"
+               " (adt_dominated=%d, arith=%d)\n",
+               adt_dominated, sem->arithmetic_ops);
+    }
+
+    /* ── Pass 2: DCE ── */
+    if (!small_program || loop_heavy) {
+        printf("  [PASS 2] Dead code elimination         → YES\n");
+        report.dead_instrs_removed = dead_code_elimination(cfg);
+        report.passes_run |= OPT_PASS_DCE;
+    } else {
+        printf("  [PASS 2] Dead code elimination         → SKIPPED"
+               " (small program)\n");
+    }
+
+    /* ── Pass 3: Unreachable Block Elimination (always run if CFG built) ── */
+    printf("  [PASS 3] Unreachable block elimination → ALWAYS\n");
+    report.unreachable_blocks = unreachable_block_elimination(cfg);
+    report.passes_run |= OPT_PASS_UNREACHABLE;
+
+    printf("\nResults:\n");
+    printf("  Constants simplified : %d\n", report.constants_folded);
+    printf("  Copies propagated    : %d\n", report.copies_propagated);
+    printf("  CSE eliminated       : %d\n", report.cse_eliminated);
+    printf("  Dead instrs removed  : %d\n", report.dead_instrs_removed);
+    printf("  Unreachable blocks   : %d\n", report.unreachable_blocks);
+    printf("=====================================\n");
+
+    free_cfg(cfg);
+    return report;
+}
+
+/* ============================================================
+ * UPDATED MASTER DRIVER
+ * run_optimizer() now delegates to the adaptive engine.
+ * For callers that don't have a SemanticReport, a default
+ * all-passes profile is used.
+ * ============================================================ */
+
+OptReport run_optimizer(IRInstruction *ir_head) {
+    /* Build a conservative profile that enables all passes */
+    SemanticReport default_sem;
+    memset(&default_sem, 0, sizeof(default_sem));
+    default_sem.constant_exprs   = 1;   /* assume: run folding       */
+    default_sem.max_loop_depth   = 1;   /* assume: run DCE + CSE     */
+    default_sem.arithmetic_ops   = 8;   /* assume: run CSE           */
+    default_sem.assignment_count = 4;   /* assume: run copy prop     */
+    default_sem.adt_ops          = 0;   /* assume: not ADT dominated */
+    return run_optimizer_adaptive(ir_head, &default_sem);
+}
+
+void print_opt_report(const OptReport *r) {
+    printf("\n=== Optimization Report ===\n");
+    printf("Passes run             : ");
+    if (r->passes_run & OPT_PASS_CONST_FOLD)  printf("ConstFold ");
+    if (r->passes_run & OPT_PASS_COPY_PROP)   printf("CopyProp ");
+    if (r->passes_run & OPT_PASS_CSE)         printf("CSE ");
+    if (r->passes_run & OPT_PASS_DCE)         printf("DCE ");
+    if (r->passes_run & OPT_PASS_UNREACHABLE) printf("UnreachElim ");
+    printf("\n");
+    printf("Constants simplified   : %d\n", r->constants_folded);
+    printf("Copies propagated      : %d\n", r->copies_propagated);
+    printf("CSE eliminated         : %d\n", r->cse_eliminated);
+    printf("Dead instrs removed    : %d\n", r->dead_instrs_removed);
+    printf("Unreachable blocks     : %d\n", r->unreachable_blocks);
+    printf("===========================\n");
 }
