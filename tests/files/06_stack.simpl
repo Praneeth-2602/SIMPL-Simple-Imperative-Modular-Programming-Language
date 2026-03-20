@@ -1,0 +1,11 @@
+let s be stack
+let x be 0
+
+push s 10
+push s 20
+push s 30
+pop s
+pop s
+
+set x to 42
+print x

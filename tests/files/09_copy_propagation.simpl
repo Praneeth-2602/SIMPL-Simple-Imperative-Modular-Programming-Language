@@ -1,0 +1,11 @@
+let x be 5
+let y be 0
+let z be 0
+
+set y to x
+set z to y
+print z
+
+set y to x
+set z to y
+print z

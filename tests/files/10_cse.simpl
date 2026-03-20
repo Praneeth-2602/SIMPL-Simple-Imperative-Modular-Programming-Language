@@ -1,0 +1,10 @@
+let a be 6
+let b be 4
+let c be 0
+let d be 0
+
+set c to a + b
+set d to a + b
+
+print c
+print d

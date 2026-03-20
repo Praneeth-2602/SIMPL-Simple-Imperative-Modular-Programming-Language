@@ -1,0 +1,13 @@
+let x be 10
+let result be 0
+
+while x > 0 do
+    if x > 5 then
+        set result to result + 2
+    else
+        set result to result + 1
+    end
+    set x to x - 1
+end
+
+print result

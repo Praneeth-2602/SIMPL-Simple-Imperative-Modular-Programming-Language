@@ -1,0 +1,26 @@
+let x be 10
+let y be 20
+let z be 0
+let s be stack
+let g be graph
+
+push s 5
+push s 10
+pop s
+
+add_edge g 1 2
+add_edge g 2 3
+
+set z to x + y
+set z to x + y
+
+while x > 0 do
+    if x > 5 then
+        set z to z + 2
+    else
+        set z to z + 1
+    end
+    set x to x - 1
+end
+
+print z

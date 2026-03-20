@@ -1,0 +1,140 @@
+# ============================================================
+# SIMPL Compiler — Comprehensive Feature Test
+# ============================================================
+# Tests every feature implemented:
+#   1. Variable declarations and arithmetic
+#   2. Constant folding (optimizer)
+#   3. If / if-else
+#   4. While loop
+#   5. Nested if inside while
+#   6. Copy propagation (optimizer)
+#   7. Dead code elimination (optimizer)
+#   8. Stack ADT + print
+#   9. Queue ADT + print
+#  10. Graph ADT + print
+# ============================================================
+
+
+# ── 1. Basic Arithmetic ──────────────────────────────────
+let a be 10
+let b be 3
+let result be 0
+
+set result to a + b
+print result
+
+set result to a - b
+print result
+
+set result to a * b
+print result
+
+set result to a / b
+print result
+
+
+# ── 2. Constant Folding ──────────────────────────────────
+# Optimizer should fold 4 + 6 = 10 and 3 * 4 = 12 at compile time
+let cf1 be 0
+let cf2 be 0
+set cf1 to 4 + 6
+set cf2 to 3 * 4
+print cf1
+print cf2
+
+
+# ── 3. If / If-Else ─────────────────────────────────────
+let x be 15
+
+if x > 10 then
+    print x
+end
+
+if x > 20 then
+    print x
+else
+    print 0
+end
+
+
+# ── 4. While Loop ────────────────────────────────────────
+# Sum 1..5 = 15
+let i be 5
+let sum be 0
+
+while i > 0 do
+    set sum to sum + i
+    set i to i - 1
+end
+
+print sum
+
+
+# ── 5. Nested If Inside While ────────────────────────────
+# Count evens and odds from 1..6
+# evens (2,4,6) contribute 1 each, odds contribute 0
+# result should be 3
+let n be 6
+let count be 0
+
+while n > 0 do
+    if n > 3 then
+        set count to count + 1
+    end
+    set n to n - 1
+end
+
+print count
+
+
+# ── 6. Copy Propagation ──────────────────────────────────
+# y = x, z = y  =>  optimizer collapses z = x
+let cp_x be 7
+let cp_y be 0
+let cp_z be 0
+
+set cp_y to cp_x
+set cp_z to cp_y
+print cp_z
+
+
+# ── 7. Dead Code Elimination ─────────────────────────────
+# dead is written but never read — DCE removes it
+let live be 42
+let dead be 0
+set dead to live + 1
+print live
+
+
+# ── 8. Stack ─────────────────────────────────────────────
+let s be stack
+
+push s 10
+push s 20
+push s 30
+pop s
+
+print s
+
+
+# ── 9. Queue ─────────────────────────────────────────────
+let q be queue
+
+enqueue q 100
+enqueue q 200
+enqueue q 300
+dequeue q
+
+print q
+
+
+# ── 10. Graph ────────────────────────────────────────────
+let g be graph
+
+add_edge g 0 1
+add_edge g 0 2
+add_edge g 1 2
+add_edge g 2 3
+remove_edge g 0 2
+
+print g
