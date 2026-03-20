@@ -413,6 +413,20 @@ static void check_node(ASTNode *node) {
         }
 
         case AST_PRINT: {
+            /* Allow printing of both int expressions and ADT variables */
+            if (node->left && node->left->type == AST_IDENTIFIER) {
+                Type t = symtab_lookup(node->left->name);
+                if (t == TYPE_STACK || t == TYPE_QUEUE ||
+                    t == TYPE_TREE  || t == TYPE_GRAPH) {
+                    /* ADT print — allowed, set inferred type */
+                    node->inferred_type = t;
+                    if (current_opts.verbose) {
+                        printf("  [PRINT] %s : %s\n",
+                               node->left->name, type_to_string(t));
+                    }
+                    break;
+                }
+            }
             Type expr_type = check_expression_type(node->left);
             node->inferred_type = expr_type;
             break;

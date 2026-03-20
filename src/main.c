@@ -63,7 +63,7 @@ int main(int argc, char **argv) {
     printf("=========================================\n");
 
     /* ── 4. Optimization ── */
-    OptReport opt = run_optimizer(ir);
+    OptReport opt = run_optimizer_adaptive(ir, &sem);
     print_optimized_ir(ir);
 
     /* ── 5. LLVM IR Code Generation ── */
@@ -79,9 +79,7 @@ int main(int argc, char **argv) {
     printf("Output            : %s\n", out_path);
     printf("Semantic errors   : %d\n", sem.error_count);
     printf("Semantic warnings : %d\n", sem.warning_count);
-    printf("Constants folded  : %d\n", opt.constants_folded);
-    printf("Dead instrs elim. : %d\n", opt.dead_instrs_removed);
-    printf("Unreachable blocks: %d\n", opt.unreachable_blocks);
+    print_opt_report(&opt);
     printf("===========================\n");
     printf("\nTo build a native binary:\n");
     printf("  clang %s -o program && ./program\n", out_path);

@@ -14,17 +14,39 @@ typedef enum {
     IR_LABEL,
     IR_GOTO,
     IR_IF_FALSE_GOTO,
-    IR_CMP
+    IR_CMP,
+
+    /* ── ADT opcodes ─────────────────────────────────────────
+     * result = ADT variable name
+     * arg1   = value being pushed/enqueued/inserted (or "")
+     * arg2   = second argument (graph: destination node)
+     *
+     * For IR_ADT_DECL the ADT type is encoded in cmp_op:
+     *   's' = stack   'q' = queue   't' = tree   'g' = graph
+     * ──────────────────────────────────────────────────────── */
+    IR_ADT_DECL,          /* declare ADT variable              */
+    IR_STACK_PUSH,        /* push  <var> <value>               */
+    IR_STACK_POP,         /* pop   <var>                       */
+    IR_QUEUE_ENQUEUE,     /* enqueue <var> <value>             */
+    IR_QUEUE_DEQUEUE,     /* dequeue <var>                     */
+    IR_TREE_INSERT,       /* insert <var> <value>              */
+    IR_TREE_REMOVE,       /* remove <var> <value>              */
+    IR_GRAPH_ADD_EDGE,    /* add_edge    <var> <from> <to>     */
+    IR_GRAPH_REMOVE_EDGE, /* remove_edge <var> <from> <to>     */
+
+    /* ADT print — result = var name, cmp_op = type tag (s/q/t/g) */
+    IR_PRINT_ADT
 } IROp;
 
 typedef struct IRInstruction {
     IROp op;
 
-    char result[32];
-    char arg1[32];
-    char arg2[32];
+    char result[32];   /* destination / ADT variable name      */
+    char arg1[32];     /* first source operand / graph 'from'  */
+    char arg2[32];     /* second source / graph 'to'           */
 
-    /* Used only for IR_CMP to encode the relational operator (>, <, =, !). */
+    /* For IR_CMP: relational operator (>, <, =, !)
+     * For IR_ADT_DECL: ADT type tag ('s','q','t','g')        */
     char cmp_op;
 
     struct IRInstruction *prev;
