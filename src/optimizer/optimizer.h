@@ -103,6 +103,8 @@ CFG *build_cfg(IRInstruction *ir_head);
 
 /* v1 passes */
 int constant_folding(IRInstruction *ir_head);
+int constant_propagation(IRInstruction *ir_head);
+int simplify_constant_branches(IRInstruction *ir_head);
 int dead_code_elimination(CFG *cfg);
 int unreachable_block_elimination(CFG *cfg);
 

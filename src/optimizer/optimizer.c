@@ -89,6 +89,7 @@ static const char *instr_defines(IRInstruction *inst) {
         case IR_MUL:
         case IR_DIV:
         case IR_CMP:
+        case IR_CALL:
             return inst->result;
         default:
             return NULL;
@@ -113,6 +114,12 @@ static int has_side_effect(IRInstruction *inst) {
         case IR_GRAPH_ADD_EDGE:
         case IR_GRAPH_REMOVE_EDGE:
         case IR_PRINT_ADT:
+        case IR_FUNC_BEGIN:
+        case IR_PARAM_DECL:
+        case IR_FUNC_END:
+        case IR_RETURN:
+        case IR_CALL:
+        case IR_CALL_ARG:
             return 1;
         default:
             return 0;
@@ -194,7 +201,7 @@ static int evaluate_cmp(int a, int b, char cmp_op, int *result) {
     }
 }
 
-static int constant_propagation(IRInstruction *ir_head) {
+int constant_propagation(IRInstruction *ir_head) {
     ConstantSet set;
     IRInstruction *inst = ir_head;
     int propagated = 0;
@@ -232,6 +239,11 @@ static int constant_propagation(IRInstruction *ir_head) {
                 propagated += replace_with_known_constant(inst->result, sizeof(inst->result), &set);
                 break;
 
+            case IR_RETURN:
+            case IR_CALL_ARG:
+                propagated += replace_with_known_constant(inst->result, sizeof(inst->result), &set);
+                break;
+
             case IR_IF_FALSE_GOTO:
                 propagated += replace_with_known_constant(inst->arg1, sizeof(inst->arg1), &set);
                 constants_clear(&set);
@@ -254,7 +266,7 @@ static int constant_propagation(IRInstruction *ir_head) {
     return propagated;
 }
 
-static int simplify_constant_branches(IRInstruction *ir_head) {
+int simplify_constant_branches(IRInstruction *ir_head) {
     int simplified = 0;
     IRInstruction *inst = ir_head;
 
@@ -581,9 +593,12 @@ static void live_add(LiveSet *s, const char *name) {
 static void live_remove(LiveSet *s, const char *name) {
     for (int i = 0; i < s->count; i++) {
         if (strcmp(s->names[i], name) == 0) {
-            /* Replace with last entry */
-            s->names[i][0] = '\0';
-            strncpy(s->names[i], s->names[s->count - 1], 31);
+            /* Replace with last entry when removing a non-last slot. */
+            if (i != s->count - 1) {
+                strncpy(s->names[i], s->names[s->count - 1], 31);
+                s->names[i][31] = '\0';
+            }
+            s->names[s->count - 1][0] = '\0';
             s->count--;
             return;
         }
@@ -627,6 +642,10 @@ static void live_add_uses(LiveSet *live, IRInstruction *inst) {
         case IR_PRINT:
             if (!is_constant(inst->result)) live_add(live, inst->result);
             break;
+        case IR_RETURN:
+        case IR_CALL_ARG:
+            if (!is_constant(inst->result)) live_add(live, inst->result);
+            break;
         case IR_IF_FALSE_GOTO:
             if (!is_constant(inst->arg1)) live_add(live, inst->arg1);
             break;
@@ -657,6 +676,10 @@ static void compute_block_use_def(BasicBlock *b, LiveSet *use, LiveSet *def) {
                     live_add(use, cur->arg2);
                 }
             } else if (cur->op == IR_PRINT) {
+                if (!is_constant(cur->result) && !live_contains(def, cur->result)) {
+                    live_add(use, cur->result);
+                }
+            } else if (cur->op == IR_RETURN || cur->op == IR_CALL_ARG) {
                 if (!is_constant(cur->result) && !live_contains(def, cur->result)) {
                     live_add(use, cur->result);
                 }
@@ -1038,6 +1061,11 @@ int copy_propagation(IRInstruction *ir_head) {
                     break;
 
                 case IR_PRINT:
+                    changed += cp_replace(&t, inst->result);
+                    break;
+
+                case IR_RETURN:
+                case IR_CALL_ARG:
                     changed += cp_replace(&t, inst->result);
                     break;
 
