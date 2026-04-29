@@ -1,0 +1,15 @@
+let a be 10
+let b be 3
+let c be 0
+
+set c to a + b
+print c
+
+set c to a - b
+print c
+
+set c to a * b
+print c
+
+set c to a / b
+print c

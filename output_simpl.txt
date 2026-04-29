@@ -1,0 +1,21 @@
+==== SIMPL Clean Run ====
+[1/6] make clean
+rm -f src/parser/simpl.tab.c src/parser/simpl.tab.h
+rm -f src/lexer/lex.yy.c
+rm -f output.ll program
+rm -f simpl simpl.exe
+[2/6] make
+bison -d -o src/parser/simpl.tab.c src/parser/simpl.y
+src/parser/simpl.y: warning: 16 reduce/reduce conflicts [-Wconflicts-rr]
+src/parser/simpl.y: note: rerun with option '-Wcounterexamples' to generate conflict counterexamples
+flex  -o src/lexer/lex.yy.c src/lexer/simpl.l
+cc -Wall -Wextra -g -I src/parser -I src/semantic -I src/ir -I src/optimizer -I src/rl_agent -I src/codegen src/parser/simpl.tab.c src/lexer/lex.yy.c src/parser/ast.c src/semantic/symbol_table.c src/semantic/semantic.c src/ir/ir.c src/optimizer/optimizer.c src/rl_agent/rl_agent.c src/codegen/codegen.c src/main.c -o simpl -lm
+[3/6] bash ./train.sh 1000
+>>> Training dir  : tests/train_files
+>>> Corpus summary: total=162 shard=162 sample_per_episode=0
+>>> Shard config : index=0 count=1
+>>> Collecting baseline metrics (episode 0)...
+>>> Training for 8000 episodes...
+    Episode 1 / 8000 complete | files=162 | time=3s
+    Episode 2 / 8000 complete | files=162 | time=2s
+    Episode 3 / 8000 complete | files=162 | time=3s

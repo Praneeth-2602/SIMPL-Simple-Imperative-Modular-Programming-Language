@@ -35,7 +35,14 @@ typedef enum {
     IR_GRAPH_REMOVE_EDGE, /* remove_edge <var> <from> <to>     */
 
     /* ADT print — result = var name, cmp_op = type tag (s/q/t/g) */
-    IR_PRINT_ADT
+    IR_PRINT_ADT,
+
+    IR_FUNC_BEGIN,
+    IR_PARAM_DECL,
+    IR_FUNC_END,
+    IR_RETURN,
+    IR_CALL,
+    IR_CALL_ARG
 } IROp;
 
 typedef struct IRInstruction {

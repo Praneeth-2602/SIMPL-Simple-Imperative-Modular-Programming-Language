@@ -140,7 +140,19 @@ static ADTKind tag_to_kind(char tag) {
 }
 
 static void collect(CG *cg, IRInstruction *ir) {
+    int in_func = 0;
+
     for (IRInstruction *i = ir; i; i = i->next) {
+        if (i->op == IR_FUNC_BEGIN) {
+            in_func = 1;
+            continue;
+        }
+        if (i->op == IR_FUNC_END) {
+            in_func = 0;
+            continue;
+        }
+        if (in_func) continue;
+
         if (i->op == IR_ADT_DECL) {
             reg_adt(cg, i->result, tag_to_kind(i->cmp_op));
         } else if (i->op == IR_ASSIGN && !is_temp(i->result)) {
@@ -473,34 +485,14 @@ static void emit_tree_insert(CG *cg, IRInstruction *inst) {
 }
 
 static void emit_tree_remove(CG *cg, IRInstruction *inst) {
-    /* Emit an inline linear-scan loop to find and tombstone the value.
-     *
-     *  LLVM IR structure:
-     *    br tree_rm_loop_<id>
-     *  tree_rm_loop_<id>:
-     *    phi i = [0, entry], [i+1, tree_rm_body_<id>]
-     *    sz = load size
-     *    done = icmp sge i, sz
-     *    br done → tree_rm_end_<id>, tree_rm_body_<id>
-     *  tree_rm_body_<id>:
-     *    gep  = &data[i]
-     *    elem = load *gep
-     *    hit  = icmp eq elem, val
-     *    br hit → tree_rm_hit_<id>, tree_rm_next_<id>
-     *  tree_rm_hit_<id>:
-     *    store INT32_MIN → *gep
-     *    br tree_rm_end_<id>
-     *  tree_rm_next_<id>:
-     *    i1 = i + 1
-     *    br tree_rm_loop_<id>
-     *  tree_rm_end_<id>:
+    /* Linear scan with an alloca-backed index. Keeping this out of SSA phi
+     * form avoids needing predecessor-label tracking in the text emitter.
      */
     const char *n = inst->result;
     char vbuf[32];
     const char *val = load_val(cg, inst->arg1, vbuf);
     int id = cg->reg++;
 
-    /* unique label names */
     char lloop[40], lbody[40], lhit[40], lnext[40], lend[40];
     snprintf(lloop, 40, "tree_rm_loop_%d", id);
     snprintf(lbody, 40, "tree_rm_body_%d", id);
@@ -508,30 +500,6 @@ static void emit_tree_remove(CG *cg, IRInstruction *inst) {
     snprintf(lnext, 40, "tree_rm_next_%d", id);
     snprintf(lend,  40, "tree_rm_end_%d",  id);
 
-    int r = cg->reg; cg->reg += 8;
-
-    fprintf(cg->out,
-        "  br label %%%s\n"
-        "\n%s:\n"
-        "  %%r%d = phi i32 [ 0, %%entry_or_prev ], [ %%r%d, %%%s ]\n",
-        lloop,
-        lloop,
-        r,   r+7, lnext);
-
-    /* The phi above needs the predecessor label. Since we don't track
-     * the last emitted label precisely here, we use a helper approach:
-     * emit a dedicated pre-loop block to give phi a clean predecessor. */
-
-    /* Simpler alternative: use alloca for loop counter instead of phi.
-     * This avoids needing predecessor label tracking and is equally
-     * valid — mem2reg will clean it up. */
-
-    /* ── Rewrite using alloca-based loop counter (mem2reg-friendly) ── */
-    /* Undo the fprintf above — use a cleaner pattern */
-    /* We'll use a fresh reg set */
-    cg->reg = r;  /* reset, we'll reuse */
-
-    /* Actually output the simpler alloca-counter version: */
     int idx_r  = cg->reg++;
     int sz_r   = cg->reg++;
     int cmp_r  = cg->reg++;
@@ -540,13 +508,6 @@ static void emit_tree_remove(CG *cg, IRInstruction *inst) {
     int hit_r  = cg->reg++;
     int inc_r  = cg->reg++;
 
-    /* We need to undo the partial fprintf we already sent. Unfortunately
-     * we can't un-write to the file. Use a cleaner split: emit the whole
-     * thing as a self-contained block, using a fresh alloca for the index.
-     * The partial phi line above is already written — we'll comment it out
-     * by restarting the approach entirely with alloca. */
-
-    /* ── Correct approach: alloca loop index, no phi needed ── */
     fprintf(cg->out,
         "  ; tree remove: linear scan for value %s in %s\n"
         "  %%tidx_%d = alloca i32, align 4\n"
@@ -934,13 +895,220 @@ static void emit_print_adt(CG *cg, IRInstruction *inst) {
 }
 
 /* ============================================================
+ * FUNCTION EMISSION
+ * ============================================================ */
+
+static void collect_call_args(CG *cg, IRInstruction *call_inst,
+                              char argvals[][64], int nargs) {
+    int slot = nargs - 1;
+    IRInstruction *ap = call_inst->prev;
+
+    while (ap && slot >= 0) {
+        if (ap->op == IR_CALL_ARG) {
+            char buf[64];
+            const char *v = load_val(cg, ap->result, buf);
+            strncpy(argvals[slot], v, 63);
+            argvals[slot][63] = '\0';
+            slot--;
+            ap = ap->prev;
+        } else if (ap->op == IR_CALL) {
+            int skip = atoi(ap->arg2);
+            ap = ap->prev;
+            while (ap && skip > 0) {
+                if (ap->op == IR_CALL_ARG) {
+                    skip--;
+                } else if (ap->op == IR_CALL) {
+                    skip += atoi(ap->arg2);
+                }
+                ap = ap->prev;
+            }
+        } else {
+            break;
+        }
+    }
+}
+
+static int func_has_param(IRInstruction *begin, const char *name) {
+    for (IRInstruction *i = begin->next; i && i->op == IR_PARAM_DECL; i = i->next) {
+        if (strcmp(i->result, name) == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+static void collect_func(CG *cg, IRInstruction *begin) {
+    for (IRInstruction *i = begin->next; i && i->op != IR_FUNC_END; i = i->next) {
+        if (i->op == IR_ADT_DECL) {
+            reg_adt(cg, i->result, tag_to_kind(i->cmp_op));
+        } else if (i->op == IR_ASSIGN && !is_temp(i->result) &&
+                   !func_has_param(begin, i->result)) {
+            reg_var(cg, i->result);
+        }
+    }
+}
+
+static void emit_function(CG *cg, IRInstruction *begin) {
+    const char *fname = begin->result;
+    int nparams = atoi(begin->arg1);
+    FILE *out = cg->out;
+    char pnames[16][32];
+    int pc = 0;
+    IRInstruction *pi = begin->next;
+    CG lcg;
+    IRInstruction *inst;
+    IRInstruction *prev = NULL;
+
+    while (pi && pi->op == IR_PARAM_DECL && pc < 16) {
+        strncpy(pnames[pc], pi->result, 31);
+        pnames[pc][31] = '\0';
+        pc++;
+        pi = pi->next;
+    }
+
+    fprintf(out, "define i32 @%s(", fname);
+    for (int i = 0; i < nparams; i++) {
+        fprintf(out, "i32 %%%s%s", pnames[i], (i < nparams - 1) ? ", " : "");
+    }
+    fprintf(out, ") {\nentry:\n");
+
+    memset(&lcg, 0, sizeof(lcg));
+    lcg.out = out;
+    lcg.reg = cg->reg;
+    collect_func(&lcg, begin);
+
+    emit_allocas(&lcg);
+    for (int i = 0; i < nparams; i++) {
+        fprintf(out, "  %%%s_slot = alloca i32, align 4\n", pnames[i]);
+        fprintf(out, "  store i32 %%%s, i32* %%%s_slot, align 4\n", pnames[i], pnames[i]);
+    }
+    if (nparams > 0) {
+        fprintf(out, "\n");
+    }
+
+    inst = begin->next;
+    while (inst && inst->op != IR_FUNC_END) {
+        if (inst->op == IR_PARAM_DECL) {
+            prev = inst;
+            inst = inst->next;
+            continue;
+        }
+        if (is_dead(inst)) {
+            prev = inst;
+            inst = inst->next;
+            continue;
+        }
+
+        switch (inst->op) {
+            case IR_NOP:
+            case IR_ADT_DECL:
+                break;
+            case IR_ASSIGN:
+                emit_assign(&lcg, inst);
+                break;
+            case IR_ADD:
+                emit_binop(&lcg, "add", inst);
+                break;
+            case IR_SUB:
+                emit_binop(&lcg, "sub", inst);
+                break;
+            case IR_MUL:
+                emit_binop(&lcg, "mul", inst);
+                break;
+            case IR_DIV:
+                emit_binop(&lcg, "sdiv", inst);
+                break;
+            case IR_CMP:
+                emit_cmp(&lcg, inst);
+                break;
+            case IR_PRINT:
+                emit_print(&lcg, inst);
+                break;
+            case IR_LABEL:
+                emit_label_instr(&lcg, inst, prev);
+                break;
+            case IR_GOTO:
+                emit_goto(&lcg, inst);
+                break;
+            case IR_IF_FALSE_GOTO:
+                emit_if_false_goto(&lcg, inst, inst->next);
+                break;
+            case IR_STACK_PUSH:
+                emit_stack_push(&lcg, inst);
+                break;
+            case IR_STACK_POP:
+                emit_stack_pop(&lcg, inst);
+                break;
+            case IR_QUEUE_ENQUEUE:
+                emit_queue_enqueue(&lcg, inst);
+                break;
+            case IR_QUEUE_DEQUEUE:
+                emit_queue_dequeue(&lcg, inst);
+                break;
+            case IR_TREE_INSERT:
+                emit_tree_insert(&lcg, inst);
+                break;
+            case IR_TREE_REMOVE:
+                emit_tree_remove(&lcg, inst);
+                break;
+            case IR_GRAPH_ADD_EDGE:
+                emit_graph_edge(&lcg, inst, 1);
+                break;
+            case IR_GRAPH_REMOVE_EDGE:
+                emit_graph_edge(&lcg, inst, 0);
+                break;
+            case IR_PRINT_ADT:
+                emit_print_adt(&lcg, inst);
+                break;
+            case IR_RETURN: {
+                char buf[64];
+                const char *v = load_val(&lcg, inst->result, buf);
+                fprintf(out, "  ret i32 %s\n", v);
+                break;
+            }
+            case IR_CALL: {
+                char argvals[16][64];
+                char call_args[512] = "";
+                int nargs = atoi(inst->arg2);
+                memset(argvals, 0, sizeof(argvals));
+                collect_call_args(&lcg, inst, argvals, nargs);
+                for (int i = 0; i < nargs; i++) {
+                    char part[80];
+                    snprintf(part, sizeof(part), "i32 %s%s",
+                             argvals[i], (i < nargs - 1) ? ", " : "");
+                    strncat(call_args, part, sizeof(call_args) - strlen(call_args) - 1);
+                }
+                fprintf(out, "  %%%s = call i32 @%s(%s)\n",
+                        inst->result, inst->arg1, call_args);
+                break;
+            }
+            case IR_CALL_ARG:
+            case IR_FUNC_BEGIN:
+            case IR_FUNC_END:
+            case IR_PARAM_DECL:
+                break;
+        }
+
+        prev = inst;
+        inst = inst->next;
+    }
+
+    fprintf(out, "  ret i32 0\n}\n\n");
+    cg->reg = lcg.reg;
+}
+
+/* ============================================================
  * MAIN EMISSION LOOP
  * ============================================================ */
 
 static void emit_instructions(CG *cg, IRInstruction *ir) {
     IRInstruction *prev = NULL;
+    int in_func = 0;
 
     for (IRInstruction *inst = ir; inst; inst = inst->next) {
+        if (inst->op == IR_FUNC_BEGIN) { in_func = 1; prev = inst; continue; }
+        if (inst->op == IR_FUNC_END)   { in_func = 0; prev = inst; continue; }
+        if (in_func) { prev = inst; continue; }
         if (is_dead(inst)) { prev = inst; continue; }
 
         switch (inst->op) {
@@ -967,6 +1135,28 @@ static void emit_instructions(CG *cg, IRInstruction *ir) {
             case IR_GRAPH_ADD_EDGE:    emit_graph_edge(cg, inst, 1); break;
             case IR_GRAPH_REMOVE_EDGE: emit_graph_edge(cg, inst, 0); break;
             case IR_PRINT_ADT:          emit_print_adt(cg, inst);      break;
+            case IR_CALL: {
+                int nargs = atoi(inst->arg2);
+                char argvals[16][64];
+                char call_args[512] = "";
+                memset(argvals, 0, sizeof(argvals));
+                collect_call_args(cg, inst, argvals, nargs);
+                for (int i = 0; i < nargs; i++) {
+                    char part[80];
+                    snprintf(part, sizeof(part), "i32 %s%s",
+                             argvals[i], (i < nargs - 1) ? ", " : "");
+                    strncat(call_args, part, sizeof(call_args) - strlen(call_args) - 1);
+                }
+                fprintf(cg->out, "  %%%s = call i32 @%s(%s)\n",
+                        inst->result, inst->arg1, call_args);
+                break;
+            }
+            case IR_CALL_ARG:
+            case IR_RETURN:
+            case IR_PARAM_DECL:
+            case IR_FUNC_BEGIN:
+            case IR_FUNC_END:
+                break;
         }
         prev = inst;
     }
@@ -986,6 +1176,11 @@ int codegen_emit_llvm(IRInstruction *ir_head, const char *out_path) {
     cg.reg = 0;
 
     emit_header(&cg);
+    for (IRInstruction *i = ir_head; i; i = i->next) {
+        if (i->op == IR_FUNC_BEGIN) {
+            emit_function(&cg, i);
+        }
+    }
     collect(&cg, ir_head);
 
     fprintf(out, "define i32 @main() {\nentry:\n");

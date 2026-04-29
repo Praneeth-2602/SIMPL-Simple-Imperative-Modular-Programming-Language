@@ -1,4 +1,172 @@
-let x be 10
+# ============================================================
+# SIMPL single-file feature + optimization demo
+# Covers:
+# - Primitive type (int)
+# - ADTs: stack, queue, tree, graph
+# - Function definition, return, and calls
+# - Control flow (if/else, while)
+# - Optimization-friendly patterns in unoptimized source:
+#   constant folding, copy propagation, CSE, dead assignments,
+#   constant branch simplification, and ADT canceling patterns
+# ============================================================
 
-set x to 5 + 3 * 2
-print x
+# ---------- Functions ----------
+func add_and_shift(a, b)
+    let tmp be 0
+    let sum1 be 0
+    let sum2 be 0
+    set sum1 to a + b
+    set sum2 to b + a
+    set tmp to sum2 + 1
+    return tmp
+end
+
+func countdown_sum(n)
+    let acc be 0
+    while n > 0 do
+        set acc to acc + n
+        set n to n - 1
+    end
+    return acc
+end
+
+# ---------- Primitive int + arithmetic ----------
+let x be 10
+let y be 4
+let z be 0
+
+set z to x + y
+print z
+
+set z to x - y
+print z
+
+set z to x * y
+print z
+
+set z to x / y
+print z
+
+# Constant folding opportunities
+let k1 be 0
+let k2 be 0
+set k1 to 2 + 3 * 4
+set k2 to 8 + 2
+print k1
+print k2
+
+# Copy propagation opportunities
+let cp_a be 7
+let cp_b be 0
+let cp_c be 0
+let cp_d be 0
+set cp_b to cp_a
+set cp_c to cp_b
+set cp_d to cp_c
+print cp_d
+
+# Common subexpression opportunity
+let cse_base be 9
+let cse_1 be 0
+let cse_2 be 0
+let cse_3 be 0
+set cse_1 to cse_base + 5
+set cse_2 to cse_base + 5
+set cse_3 to cse_base + 5
+print cse_1
+print cse_2
+print cse_3
+
+# Dead assignment opportunity (written, never read)
+let live be 42
+let dead1 be 0
+let dead2 be 0
+let dead3 be 0
+set dead1 to live + 100
+set dead2 to dead1 + 1
+set dead3 to dead2 + 2
+print live
+
+# Constant branch simplification opportunity
+if 1 > 0 then
+    print 111
+else
+    print 222
+end
+
+if 5 < 1 then
+    let unreachable_a be 0
+    set unreachable_a to 999
+    print unreachable_a
+end
+
+if 0 > 1 then
+    print 333
+else
+    print 444
+end
+
+# Regular control flow
+if x > y then
+    print x
+else
+    print y
+end
+
+let loop_i be 3
+while loop_i > 0 do
+    print loop_i
+    set loop_i to loop_i - 1
+end
+
+# ---------- Function calls ----------
+let f1 be 0
+let f2 be 0
+set f1 to add_and_shift(5, 6)
+set f2 to countdown_sum(4)
+print f1
+print f2
+
+# call-as-statement also supported
+add_and_shift(1, 2)
+
+# ---------- ADTs ----------
+let s be stack
+let q be queue
+let t be tree
+let g be graph
+
+# stack: includes push-pop canceling pattern
+push s 10
+push s 20
+pop s
+push s 30
+print s
+
+# queue: includes enqueue-dequeue canceling pattern
+enqueue q 100
+enqueue q 200
+dequeue q
+enqueue q 300
+print q
+
+# tree operations (complete-binary-tree array layout)
+# inserting 1 five times fills indices 0..4:
+#   idx0=root, idx1/2 children of root, idx3/4 children of idx1
+insert t 1
+insert t 2
+insert t 3
+insert t 4
+insert t 5
+print t
+
+# remove marks one matching slot as tombstone; print skips tombstones
+remove t 3
+print t
+
+# graph operations
+add_edge g 1 2
+add_edge g 2 3
+add_edge g 1 3
+remove_edge g 1 3
+print g
