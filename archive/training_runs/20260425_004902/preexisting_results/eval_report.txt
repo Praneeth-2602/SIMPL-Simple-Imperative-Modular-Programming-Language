@@ -1,0 +1,129 @@
+============================================================
+ SIMPL RL Compiler — Evaluation Report
+============================================================
+ Q-table: rl_qtable.bin
+ RL episodes trained: 81900
+ Programs evaluated : 91
+ Programs skipped   : 0
+
+Per-program results:
+------------------------------------------------------------
+Program                           Base     Fixed  Adaptive        RL
+-------------------------------- -----  --------  --------  --------
+eval_deep_few_dominated_has_large_v01    51        33        33        32
+eval_deep_few_dominated_has_medium_v01    25         7         7         6
+eval_deep_few_dominated_no_large_v01    51        29        27        29
+eval_deep_few_dominated_no_medium_v01    25         3         3         3
+eval_deep_few_light_has_large_v01    51        35        35        34
+eval_deep_few_light_has_medium_v01    23         7         7         6
+eval_deep_few_light_no_large_v01    51        31        29        31
+eval_deep_few_light_no_medium_v01    23         3         3         3
+eval_deep_few_none_has_large_v01    51        37        37        36
+eval_deep_few_none_has_medium_v01    21         7         7         6
+eval_deep_few_none_no_large_v01     51        33        31        33
+eval_deep_few_none_no_medium_v01    21         3         3         3
+eval_deep_many_dominated_has_large_v01    51        29        20        28
+eval_deep_many_dominated_has_medium_v01    37        15         8        14
+eval_deep_many_dominated_no_large_v01    51        28        19        28
+eval_deep_many_dominated_no_medium_v01    37        14        12        14
+eval_deep_many_light_has_large_v01    51        35        25        34
+eval_deep_many_light_has_medium_v01    31        15         9        14
+eval_deep_many_light_no_large_v01    51        34        21        34
+eval_deep_many_light_no_medium_v01    31        14         5        14
+eval_deep_many_none_has_large_v01    51        37        27        36
+eval_deep_many_none_has_medium_v01    29        15         9        14
+eval_deep_many_none_no_large_v01    51        36        23        36
+eval_deep_many_none_no_medium_v01    29        14         5        14
+eval_deep_none_dominated_no_large_v01    51        35        35        35
+eval_deep_none_dominated_no_medium_v01    17         1         1         1
+eval_deep_none_none_no_large_v01    51        35        35        35
+eval_deep_none_none_no_medium_v01    16         0         0         0
+eval_none_few_dominated_has_large_v01    51        53        53        51
+eval_none_few_dominated_has_medium_v01    11        13        13        11
+eval_none_few_dominated_no_large_v01    51        55        55        51
+eval_none_few_dominated_no_medium_v01    11        15        15        11
+eval_none_few_light_has_large_v01    51        55        55        53
+eval_none_few_light_has_medium_v01    10        14        14        12
+eval_none_few_light_has_tiny_v01     9        13         6        11
+eval_none_few_light_no_large_v01    51        57        57        53
+eval_none_few_light_no_medium_v01    10        16        16        12
+eval_none_few_light_no_tiny_v01      9        15         8        11
+eval_none_few_none_has_large_v01    51        57        57        55
+eval_none_few_none_has_medium_v01    10        16        16        14
+eval_none_few_none_has_tiny_v01      7        13         6        11
+eval_none_few_none_no_large_v01     51        59        59        55
+eval_none_few_none_no_medium_v01    10        18        18        14
+eval_none_few_none_no_tiny_v01       7        15         8        11
+eval_none_many_dominated_has_large_v01    51        65        65        48
+eval_none_many_dominated_has_medium_v01    23        37        37        27
+eval_none_many_dominated_no_large_v01    51        67        67        47
+eval_none_many_dominated_no_medium_v01    23        39        39        28
+eval_none_many_light_has_large_v01    51        71        71        54
+eval_none_many_light_has_medium_v01    17        37        37        27
+eval_none_many_light_no_large_v01    51        73        73        53
+eval_none_many_light_no_medium_v01    17        39        39        28
+eval_none_many_none_has_large_v01    51        73        73        56
+eval_none_many_none_has_medium_v01    15        37        37        20
+eval_none_many_none_no_large_v01    51        75        75        55
+eval_none_many_none_no_medium_v01    15        39        39        28
+eval_none_none_dominated_no_large_v01    51        49        49        49
+eval_none_none_dominated_no_medium_v01    10         8         8         8
+eval_none_none_dominated_no_tiny_v01     3         1         0         1
+eval_none_none_none_no_large_v01    51        51        51        51
+eval_none_none_none_no_medium_v01    10        10        10        10
+eval_none_none_none_no_tiny_v01      2         2         1         2
+eval_shallow_few_dominated_has_large_v01    51        40        40        39
+eval_shallow_few_dominated_has_medium_v01    18         7         7         6
+eval_shallow_few_dominated_no_large_v01    51        36        34        36
+eval_shallow_few_dominated_no_medium_v01    18         3         3         3
+eval_shallow_few_light_has_large_v01    51        42        42        41
+eval_shallow_few_light_has_medium_v01    16         7         7         6
+eval_shallow_few_light_no_large_v01    51        38        36        38
+eval_shallow_few_light_no_medium_v01    16         3         3         3
+eval_shallow_few_none_has_large_v01    51        44        44        43
+eval_shallow_few_none_has_medium_v01    14         7         7         6
+eval_shallow_few_none_no_large_v01    51        40        38        40
+eval_shallow_few_none_no_medium_v01    14         3         3         3
+eval_shallow_many_dominated_has_large_v01    51        36        26        35
+eval_shallow_many_dominated_has_medium_v01    30        15         7        14
+eval_shallow_many_dominated_no_large_v01    51        35        22        35
+eval_shallow_many_dominated_no_medium_v01    30        14         5        14
+eval_shallow_many_light_has_large_v01    51        42        32        41
+eval_shallow_many_light_has_medium_v01    24        15         8        14
+eval_shallow_many_light_no_large_v01    51        41        28        41
+eval_shallow_many_light_no_medium_v01    24        14         6        14
+eval_shallow_many_none_has_large_v01    51        44        34        43
+eval_shallow_many_none_has_medium_v01    22        15         8        14
+eval_shallow_many_none_no_large_v01    51        43        30        43
+eval_shallow_many_none_no_medium_v01    22        14         6        14
+eval_shallow_none_dominated_no_large_v01    51        42        42        42
+eval_shallow_none_dominated_no_medium_v01    10         1         1         1
+eval_shallow_none_none_no_large_v01    51        42        42        42
+eval_shallow_none_none_no_medium_v01    10         1         1         1
+eval_shallow_none_none_no_tiny_v01     9         0         0         0
+------------------------------------------------------------
+AVERAGE                           33.1      27.8      24.9      25.0
+
+Average optimizer CPU time per program (ms):
+  Fixed    : 0.0370 ms
+  Adaptive : 0.0203 ms
+  RL       : 0.0218 ms
+
+Green reward (avg RL reward per program):
+  RL avg reward : 4244.5692
+
+Strategy comparison summary:
+  RL vs Fixed     : -253 instrs eliminated total
+  RL vs Adaptive  : +8 instrs eliminated total
+  RL CPU-time delta vs fixed    : +1.3830 ms total
+  RL CPU-time delta vs adaptive : -0.1400 ms total
+
+Notes:
+  - Base is the unoptimized IR instruction count.
+  - Fixed/Adaptive/RL columns are raw optimizer elimination counts reported by the compiler.
+  - Those counts are accumulated across passes, so they can exceed the base IR count and should not be read as percentages.
+  - Runtime comes from the compiler's clock()-based CPU-time measurement, not wall-clock elapsed time.
+
+============================================================
+ Full raw data: results/eval_raw.csv
+============================================================

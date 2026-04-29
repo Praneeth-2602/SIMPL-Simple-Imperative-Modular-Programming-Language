@@ -1,0 +1,8 @@
+checkpoint_episode,avg_reward,avg_instrs_eliminated,programs_measured
+0,4250.21,24.12,273
+50,2357.83,24.12,273
+100,2179.44,24.12,273
+200,2230.44,24.19,273
+350,N/A,N/A,0
+500,N/A,N/A,0
+1000,N/A,N/A,0

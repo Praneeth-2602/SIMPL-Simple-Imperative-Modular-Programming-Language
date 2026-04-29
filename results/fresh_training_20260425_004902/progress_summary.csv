@@ -1,0 +1,4 @@
+phase,chunk_label,total_full_sweeps,total_rl_elim,total_rl_ms,total_fixed_elim,total_adapt_elim,improved
+warmup,warmup_010,0,2336,2.1170,2526,2265,1
+full,chunk_025,25,2143,1.9560,2526,2265,0
+full,chunk_050,50,2134,1.6410,2526,2265,0
