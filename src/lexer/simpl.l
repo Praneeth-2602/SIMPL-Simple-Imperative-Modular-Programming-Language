@@ -13,6 +13,8 @@ ID         {LETTER}({LETTER}|{DIGIT})*
 NUMBER     {DIGIT}+
 
 %%
+"func"      { return FUNC; }
+"return"    { return RETURN; }
 "let"       { return LET; }
 "set"       { return SET; }
 "be"        { return BE; }
@@ -54,6 +56,9 @@ NUMBER     {DIGIT}+
 "-"         { return MINUS; }
 "*"         { return MUL; }
 "/"         { return DIV; }
+"("         { return LPAREN; }
+")"         { return RPAREN; }
+","         { return COMMA; }
 
 {NUMBER} {
     yylval.num = atoi(yytext);
