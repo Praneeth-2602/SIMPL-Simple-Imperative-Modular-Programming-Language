@@ -1,9 +1,10 @@
-let x be 5
+let n be 6
 let sum be 0
+let step be 1
 
-while x > 0 do
-    set sum to sum + x
-    set x to x - 1
+while n > 0 do
+    set sum to sum + n
+    set n to n - step
 end
 
 print sum

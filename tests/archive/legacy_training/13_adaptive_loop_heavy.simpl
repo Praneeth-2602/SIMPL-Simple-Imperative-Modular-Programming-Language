@@ -1,0 +1,14 @@
+let i be 10
+let j be 0
+let sum be 0
+
+while i > 0 do
+    set j to i
+    while j > 0 do
+        set sum to sum + j
+        set j to j - 1
+    end
+    set i to i - 1
+end
+
+print sum

@@ -1,0 +1,9 @@
+let a1 be 9
+let b1 be 10
+let c1 be 11
+let k1 be 8 + 9
+set a1 to a1 + b1
+set b1 to b1 - c1
+set c1 to a1 + c1
+set a1 to c1 - b1
+set b1 to a1 + b1

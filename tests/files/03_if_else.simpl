@@ -1,13 +1,17 @@
-let x be 10
+let x be 8
+let y be 5
+let best be 0
 
-if x > 5 then
-    print x
+if x > y then
+    set best to x - y
 else
-    print 0
+    set best to y - x
 end
 
-if x > 20 then
-    print 1
+print best
+
+if best == 3 then
+    print best
 else
-    print 0
+    print x
 end

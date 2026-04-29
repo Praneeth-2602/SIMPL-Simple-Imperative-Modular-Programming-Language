@@ -1,0 +1,17 @@
+let i2 be 1
+let j2 be 1
+let a2 be 14
+let b2 be 15
+let c2 be 16
+while i2 > 0 do
+    while j2 > 0 do
+        set a2 to b2 + a2
+        set b2 to a2 - b2
+        set c2 to c2 + a2
+        set a2 to c2 - b2
+        set b2 to b2 + c2
+        set c2 to a2 - c2
+        set j2 to 0
+    end
+    set i2 to 0
+end

@@ -1,0 +1,15 @@
+let i1 be 1
+let j1 be 1
+let a1 be 9
+let b1 be 10
+let c1 be 11
+let q1 be queue
+while i1 > 0 do
+    while j1 > 0 do
+        set a1 to a1 + b1
+        enqueue q1 9
+        set b1 to b1 - c1
+        set j1 to 0
+    end
+    set i1 to 0
+end

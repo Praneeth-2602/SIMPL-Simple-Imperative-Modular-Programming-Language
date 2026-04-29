@@ -1,11 +1,12 @@
 let s be stack
-let x be 0
+let a be 1
+let b be 2
+let total be 0
 
-push s 10
-push s 20
-push s 30
+push s a
+push s b
 pop s
-pop s
+push s 4 + 1
 
-set x to 42
-print x
+set total to a + b + 3
+print total

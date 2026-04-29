@@ -1,11 +1,9 @@
-let x be 5
-let y be 0
-let z be 0
+let x be 7
+let y be x
+let z be y
+let t be z
+let out be 0
 
-set y to x
-set z to y
-print z
-
-set y to x
-set z to y
-print z
+set out to t + y
+set out to out + z
+print out

@@ -1,0 +1,11 @@
+let i2 be 1
+let j2 be 1
+let seed2 be 13
+let t2 be tree
+while i2 > 0 do
+    while j2 > 0 do
+        insert t2 15
+        set j2 to 0
+    end
+    set i2 to 0
+end

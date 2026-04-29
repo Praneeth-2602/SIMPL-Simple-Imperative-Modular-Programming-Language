@@ -1,0 +1,42 @@
+let i1 be 1
+let a1 be 9
+let b1 be 10
+let c1 be 11
+let q1 be queue
+let pad1_0 be 110
+let pad1_1 be 111
+let pad1_2 be 112
+let pad1_3 be 113
+let pad1_4 be 114
+let pad1_5 be 115
+let pad1_6 be 116
+let pad1_7 be 117
+let pad1_8 be 118
+let pad1_9 be 119
+let pad1_10 be 120
+let pad1_11 be 121
+let pad1_12 be 122
+while i1 > 0 do
+    set a1 to a1 + b1
+    enqueue q1 9
+    set b1 to b1 - c1
+    set c1 to a1 + c1
+    set a1 to c1 - b1
+    set b1 to a1 + b1
+    set c1 to c1 - a1
+    set i1 to 0
+end
+let pad1_13 be 123
+let pad1_14 be 124
+let pad1_15 be 125
+let pad1_16 be 126
+let pad1_17 be 127
+let pad1_18 be 128
+let pad1_19 be 129
+let pad1_20 be 130
+let pad1_21 be 131
+let pad1_22 be 132
+let pad1_23 be 133
+let pad1_24 be 134
+let pad1_25 be 135
+let pad1_26 be 136

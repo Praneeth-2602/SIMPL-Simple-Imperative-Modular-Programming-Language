@@ -1,0 +1,3 @@
+let seed2 be 13
+let t2 be tree
+insert t2 15

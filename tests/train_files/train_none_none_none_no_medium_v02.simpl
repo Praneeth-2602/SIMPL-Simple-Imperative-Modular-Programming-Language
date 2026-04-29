@@ -1,0 +1,10 @@
+let seed1 be 8
+let pad1_0 be 110
+let pad1_1 be 111
+let pad1_2 be 112
+let pad1_3 be 113
+print seed1
+let pad1_4 be 114
+let pad1_5 be 115
+let pad1_6 be 116
+let pad1_7 be 117

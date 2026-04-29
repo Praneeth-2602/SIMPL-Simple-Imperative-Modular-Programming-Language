@@ -1,0 +1,7 @@
+let i2 be 1
+let seed2 be 13
+while i2 > 0 do
+    print seed2
+    set i2 to 0
+end
+let pad2_0 be 210

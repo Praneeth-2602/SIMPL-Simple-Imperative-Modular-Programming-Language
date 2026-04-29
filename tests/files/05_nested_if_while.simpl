@@ -1,13 +1,14 @@
-let x be 10
-let result be 0
+let i be 4
+let acc be 0
+let extra be 2
 
-while x > 0 do
-    if x > 5 then
-        set result to result + 2
+while i > 0 do
+    if i > 2 then
+        set acc to acc + i + extra
     else
-        set result to result + 1
+        set acc to acc + i
     end
-    set x to x - 1
+    set i to i - 1
 end
 
-print result
+print acc

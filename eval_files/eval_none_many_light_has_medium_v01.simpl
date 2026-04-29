@@ -1,0 +1,11 @@
+let a0 be 4
+let b0 be 5
+let c0 be 6
+let s0 be stack
+let k0 be 3 + 4
+set a0 to b0 + c0
+set b0 to a0 - c0
+set c0 to a0 + b0
+set a0 to c0 - b0
+set b0 to a0 + c0
+push s0 4

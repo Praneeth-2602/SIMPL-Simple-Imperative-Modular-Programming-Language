@@ -1,8 +1,10 @@
-let x be 10
-let y be 20
-let unused be 0
+let a be 1
+let b be 2
+let c be 3
+let d be 4
 
-set unused to x + y
-set x to x + 1
-
-print x
+set a to b + c
+set a to d + d
+set b to a + 1
+set c to b + 1
+print c

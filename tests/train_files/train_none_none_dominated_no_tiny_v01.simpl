@@ -1,0 +1,3 @@
+let seed0 be 3
+let s0 be stack
+push s0 4

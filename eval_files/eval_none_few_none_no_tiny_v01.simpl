@@ -1,0 +1,5 @@
+let a0 be 4
+let b0 be 5
+let c0 be 6
+set a0 to b0 + c0
+set b0 to a0 - c0

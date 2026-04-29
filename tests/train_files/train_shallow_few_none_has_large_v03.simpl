@@ -1,0 +1,46 @@
+let i2 be 1
+let a2 be 14
+let b2 be 15
+let c2 be 16
+while i2 > 0 do
+    let k2 be 13 + 14
+    set a2 to b2 + a2
+    set i2 to 0
+end
+let pad2_0 be 210
+let pad2_1 be 211
+let pad2_2 be 212
+let pad2_3 be 213
+let pad2_4 be 214
+let pad2_5 be 215
+let pad2_6 be 216
+let pad2_7 be 217
+let pad2_8 be 218
+let pad2_9 be 219
+let pad2_10 be 220
+let pad2_11 be 221
+let pad2_12 be 222
+let pad2_13 be 223
+let pad2_14 be 224
+let pad2_15 be 225
+let pad2_16 be 226
+let pad2_17 be 227
+let pad2_18 be 228
+let pad2_19 be 229
+let pad2_20 be 230
+let pad2_21 be 231
+let pad2_22 be 232
+let pad2_23 be 233
+let pad2_24 be 234
+let pad2_25 be 235
+let pad2_26 be 236
+let pad2_27 be 237
+let pad2_28 be 238
+let pad2_29 be 239
+let pad2_30 be 240
+let pad2_31 be 241
+let pad2_32 be 242
+let pad2_33 be 243
+let pad2_34 be 244
+let pad2_35 be 245
+let pad2_36 be 246

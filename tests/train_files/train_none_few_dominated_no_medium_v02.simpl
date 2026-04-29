@@ -1,0 +1,9 @@
+let a1 be 9
+let b1 be 10
+let c1 be 11
+let q1 be queue
+set a1 to a1 + b1
+enqueue q1 9
+set b1 to b1 - c1
+enqueue q1 10
+dequeue q1

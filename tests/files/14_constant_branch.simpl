@@ -1,17 +1,17 @@
-let x be 0
+let x be 9
+let y be 0
+let out be 0
 
-if 1 > 0 then
-    set x to 100
+if 1 == 1 then
+    set out to x + 1
 else
-    set x to 999
+    set out to y + 1
 end
 
-print x
-
-if 0 > 1 then
-    set x to 999
+if 2 > 3 then
+    set out to out + 100
 else
-    set x to 200
+    set out to out + 2
 end
 
-print x
+print out

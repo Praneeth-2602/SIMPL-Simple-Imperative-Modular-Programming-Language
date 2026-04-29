@@ -1,0 +1,23 @@
+let s be stack
+let q be queue
+let g be graph
+
+push s 1
+push s 2
+push s 3
+push s 4
+pop s
+pop s
+
+enqueue q 10
+enqueue q 20
+enqueue q 30
+dequeue q
+
+add_edge g 1 2
+add_edge g 2 3
+add_edge g 3 4
+remove_edge g 2 3
+
+let x be 1
+print x

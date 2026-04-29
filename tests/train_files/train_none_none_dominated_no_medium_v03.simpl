@@ -1,0 +1,10 @@
+let seed2 be 13
+let t2 be tree
+insert t2 15
+let pad2_0 be 210
+let pad2_1 be 211
+let pad2_2 be 212
+let pad2_3 be 213
+let pad2_4 be 214
+let pad2_5 be 215
+let pad2_6 be 216

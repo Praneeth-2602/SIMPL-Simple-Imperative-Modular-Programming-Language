@@ -1,26 +1,35 @@
-let x be 10
-let y be 20
-let z be 0
+let a be 12
+let b be 4
+let c be 0
 let s be stack
+let q be queue
+let t be tree
 let g be graph
 
-push s 5
-push s 10
-pop s
-
-add_edge g 1 2
-add_edge g 2 3
-
-set z to x + y
-set z to x + y
-
-while x > 0 do
-    if x > 5 then
-        set z to z + 2
-    else
-        set z to z + 1
-    end
-    set x to x - 1
+set c to (a + b) * (a - b)
+if c > 20 then
+    set c to c - b
+else
+    set c to c + a
 end
 
-print z
+while b > 0 do
+    set c to c + b
+    set b to b - 1
+end
+
+push s c
+push s 7
+pop s
+
+enqueue q 3
+dequeue q
+
+insert t 9
+remove t 9
+
+add_edge g 1 2
+add_edge g 2 4
+remove_edge g 1 2
+
+print c

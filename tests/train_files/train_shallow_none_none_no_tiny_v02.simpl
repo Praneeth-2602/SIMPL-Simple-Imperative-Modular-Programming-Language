@@ -1,0 +1,6 @@
+let i1 be 1
+let seed1 be 8
+while i1 > 0 do
+    print seed1
+    set i1 to 0
+end

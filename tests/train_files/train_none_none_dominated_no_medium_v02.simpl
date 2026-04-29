@@ -1,0 +1,10 @@
+let seed1 be 8
+let q1 be queue
+let pad1_0 be 110
+let pad1_1 be 111
+let pad1_2 be 112
+enqueue q1 9
+let pad1_3 be 113
+let pad1_4 be 114
+let pad1_5 be 115
+let pad1_6 be 116

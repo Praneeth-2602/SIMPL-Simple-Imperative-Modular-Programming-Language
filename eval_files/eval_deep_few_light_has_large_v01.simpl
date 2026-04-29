@@ -1,0 +1,43 @@
+let i0 be 1
+let j0 be 1
+let a0 be 4
+let b0 be 5
+let c0 be 6
+let s0 be stack
+let pad0_0 be 10
+let pad0_1 be 11
+let pad0_2 be 12
+let pad0_3 be 13
+let pad0_4 be 14
+let pad0_5 be 15
+let pad0_6 be 16
+let pad0_7 be 17
+let pad0_8 be 18
+let pad0_9 be 19
+let pad0_10 be 20
+let pad0_11 be 21
+let pad0_12 be 22
+let pad0_13 be 23
+let pad0_14 be 24
+let pad0_15 be 25
+let pad0_16 be 26
+let pad0_17 be 27
+let pad0_18 be 28
+let pad0_19 be 29
+let pad0_20 be 30
+let pad0_21 be 31
+let pad0_22 be 32
+let pad0_23 be 33
+let pad0_24 be 34
+let pad0_25 be 35
+let pad0_26 be 36
+let pad0_27 be 37
+while i0 > 0 do
+    while j0 > 0 do
+        let k0 be 3 + 4
+        set a0 to b0 + c0
+        push s0 4
+        set j0 to 0
+    end
+    set i0 to 0
+end

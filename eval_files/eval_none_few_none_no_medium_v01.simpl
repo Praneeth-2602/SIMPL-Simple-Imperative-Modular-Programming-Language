@@ -1,0 +1,8 @@
+let a0 be 4
+let b0 be 5
+let c0 be 6
+let pad0_0 be 10
+let pad0_1 be 11
+let pad0_2 be 12
+set a0 to b0 + c0
+set b0 to a0 - c0

@@ -1,0 +1,5 @@
+let a2 be 14
+let b2 be 15
+let c2 be 16
+let k2 be 13 + 14
+set a2 to b2 + a2

@@ -1,12 +1,12 @@
 let g be graph
-let x be 0
+let u be 1
+let v be 2
+let w be 3
+let result be 0
 
-add_edge g 0 1
-add_edge g 1 2
-add_edge g 2 3
-add_edge g 0 3
-remove_edge g 1 2
+add_edge g u v
+add_edge g v w
+remove_edge g u v
 
-set x to 99
-print x
-print g
+set result to u + v + w
+print result

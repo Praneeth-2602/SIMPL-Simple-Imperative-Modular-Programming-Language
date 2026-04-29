@@ -1,10 +1,11 @@
 let q be queue
-let x be 0
+let head be 10
+let tail be 20
+let score be 0
 
-enqueue q 100
-enqueue q 200
-enqueue q 300
+enqueue q head
+enqueue q tail
 dequeue q
 
-set x to 7
-print x
+set score to head + tail
+print score

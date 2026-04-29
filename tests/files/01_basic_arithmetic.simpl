@@ -4,12 +4,9 @@ let c be 0
 
 set c to a + b
 print c
-
 set c to a - b
 print c
-
 set c to a * b
 print c
-
 set c to a / b
 print c

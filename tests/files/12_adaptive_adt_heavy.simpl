@@ -1,23 +1,25 @@
 let s be stack
 let q be queue
+let t be tree
 let g be graph
+let total be 0
 
 push s 1
 push s 2
 push s 3
-push s 4
-pop s
 pop s
 
-enqueue q 10
-enqueue q 20
-enqueue q 30
+enqueue q 4
+enqueue q 5
 dequeue q
+
+insert t 7
+insert t 8
+remove t 7
 
 add_edge g 1 2
 add_edge g 2 3
-add_edge g 3 4
-remove_edge g 2 3
+remove_edge g 1 2
 
-let x be 1
-print x
+set total to 1 + 2 + 3 + 4
+print total

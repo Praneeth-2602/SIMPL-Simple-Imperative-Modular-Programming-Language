@@ -1,16 +1,6 @@
-let x be 0
-
-set x to 2 + 3
-print x
-
-set x to 10 - 4
-print x
-
-set x to 3 * 4
-print x
-
-set x to 10 / 2
-print x
-
-set x to 6 + 3 * 2
-print x
+let x be 2 + 3 * 4
+let y be 1 + 1 + 2 + 2
+let z be x + y
+print z
+set z to z + 5 - 5
+print z

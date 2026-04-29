@@ -1,0 +1,16 @@
+let x be 0
+
+set x to 2 + 3
+print x
+
+set x to 10 - 4
+print x
+
+set x to 3 * 4
+print x
+
+set x to 10 / 2
+print x
+
+set x to 6 + 3 * 2
+print x

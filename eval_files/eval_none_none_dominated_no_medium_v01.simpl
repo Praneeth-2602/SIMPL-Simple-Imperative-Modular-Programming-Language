@@ -1,0 +1,10 @@
+let seed0 be 3
+let s0 be stack
+let pad0_0 be 10
+let pad0_1 be 11
+let pad0_2 be 12
+let pad0_3 be 13
+let pad0_4 be 14
+let pad0_5 be 15
+let pad0_6 be 16
+push s0 4

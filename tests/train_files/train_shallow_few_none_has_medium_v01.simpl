@@ -1,0 +1,9 @@
+let i0 be 1
+let a0 be 4
+let b0 be 5
+let c0 be 6
+while i0 > 0 do
+    let k0 be 3 + 4
+    set a0 to b0 + c0
+    set i0 to 0
+end

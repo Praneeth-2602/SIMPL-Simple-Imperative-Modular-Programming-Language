@@ -1,0 +1,7 @@
+let i1 be 1
+let seed1 be 8
+let q1 be queue
+while i1 > 0 do
+    enqueue q1 9
+    set i1 to 0
+end

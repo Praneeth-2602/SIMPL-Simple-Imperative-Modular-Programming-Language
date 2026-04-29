@@ -1,14 +1,17 @@
-let i be 10
-let j be 0
-let sum be 0
+let i be 5
+let j be 3
+let acc be 0
+let outer be 0
 
 while i > 0 do
-    set j to i
+    set outer to outer + i
     while j > 0 do
-        set sum to sum + j
+        set acc to acc + i + j
         set j to j - 1
     end
     set i to i - 1
+    set j to 3
 end
 
-print sum
+print acc
+print outer

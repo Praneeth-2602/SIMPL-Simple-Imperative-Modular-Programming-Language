@@ -1,0 +1,487 @@
+target_loop,target_arith,target_adt,target_const,target_size,variant,status,actual_loop,actual_arith,actual_adt,actual_const,actual_size,file
+none,none,none,no,tiny,1,verified,none,none,none,no,tiny,train_none_none_none_no_tiny_v01.simpl
+none,none,none,no,tiny,2,verified,none,none,none,no,tiny,train_none_none_none_no_tiny_v02.simpl
+none,none,none,no,tiny,3,verified,none,none,none,no,tiny,train_none_none_none_no_tiny_v03.simpl
+none,none,none,no,medium,1,verified,none,none,none,no,medium,train_none_none_none_no_medium_v01.simpl
+none,none,none,no,medium,2,verified,none,none,none,no,medium,train_none_none_none_no_medium_v02.simpl
+none,none,none,no,medium,3,verified,none,none,none,no,medium,train_none_none_none_no_medium_v03.simpl
+none,none,none,no,large,1,verified,none,none,none,no,large,train_none_none_none_no_large_v01.simpl
+none,none,none,no,large,2,verified,none,none,none,no,large,train_none_none_none_no_large_v02.simpl
+none,none,none,no,large,3,verified,none,none,none,no,large,train_none_none_none_no_large_v03.simpl
+none,none,none,has,tiny,1,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+none,none,none,has,tiny,2,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+none,none,none,has,tiny,3,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+none,none,none,has,medium,1,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+none,none,none,has,medium,2,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+none,none,none,has,medium,3,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+none,none,none,has,large,1,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+none,none,none,has,large,2,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+none,none,none,has,large,3,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+none,none,light,no,tiny,1,adt=light requires adt_ops>0 and adt_ops<=arithmetic_ops,,,,,,
+none,none,light,no,tiny,2,adt=light requires adt_ops>0 and adt_ops<=arithmetic_ops,,,,,,
+none,none,light,no,tiny,3,adt=light requires adt_ops>0 and adt_ops<=arithmetic_ops,,,,,,
+none,none,light,no,medium,1,adt=light requires adt_ops>0 and adt_ops<=arithmetic_ops,,,,,,
+none,none,light,no,medium,2,adt=light requires adt_ops>0 and adt_ops<=arithmetic_ops,,,,,,
+none,none,light,no,medium,3,adt=light requires adt_ops>0 and adt_ops<=arithmetic_ops,,,,,,
+none,none,light,no,large,1,adt=light requires adt_ops>0 and adt_ops<=arithmetic_ops,,,,,,
+none,none,light,no,large,2,adt=light requires adt_ops>0 and adt_ops<=arithmetic_ops,,,,,,
+none,none,light,no,large,3,adt=light requires adt_ops>0 and adt_ops<=arithmetic_ops,,,,,,
+none,none,light,has,tiny,1,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+none,none,light,has,tiny,2,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+none,none,light,has,tiny,3,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+none,none,light,has,medium,1,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+none,none,light,has,medium,2,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+none,none,light,has,medium,3,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+none,none,light,has,large,1,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+none,none,light,has,large,2,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+none,none,light,has,large,3,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+none,none,dominated,no,tiny,1,verified,none,none,dominated,no,tiny,train_none_none_dominated_no_tiny_v01.simpl
+none,none,dominated,no,tiny,2,verified,none,none,dominated,no,tiny,train_none_none_dominated_no_tiny_v02.simpl
+none,none,dominated,no,tiny,3,verified,none,none,dominated,no,tiny,train_none_none_dominated_no_tiny_v03.simpl
+none,none,dominated,no,medium,1,verified,none,none,dominated,no,medium,train_none_none_dominated_no_medium_v01.simpl
+none,none,dominated,no,medium,2,verified,none,none,dominated,no,medium,train_none_none_dominated_no_medium_v02.simpl
+none,none,dominated,no,medium,3,verified,none,none,dominated,no,medium,train_none_none_dominated_no_medium_v03.simpl
+none,none,dominated,no,large,1,verified,none,none,dominated,no,large,train_none_none_dominated_no_large_v01.simpl
+none,none,dominated,no,large,2,verified,none,none,dominated,no,large,train_none_none_dominated_no_large_v02.simpl
+none,none,dominated,no,large,3,verified,none,none,dominated,no,large,train_none_none_dominated_no_large_v03.simpl
+none,none,dominated,has,tiny,1,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+none,none,dominated,has,tiny,2,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+none,none,dominated,has,tiny,3,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+none,none,dominated,has,medium,1,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+none,none,dominated,has,medium,2,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+none,none,dominated,has,medium,3,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+none,none,dominated,has,large,1,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+none,none,dominated,has,large,2,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+none,none,dominated,has,large,3,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+none,few,none,no,tiny,1,verified,none,few,none,no,tiny,train_none_few_none_no_tiny_v01.simpl
+none,few,none,no,tiny,2,verified,none,few,none,no,tiny,train_none_few_none_no_tiny_v02.simpl
+none,few,none,no,tiny,3,verified,none,few,none,no,tiny,train_none_few_none_no_tiny_v03.simpl
+none,few,none,no,medium,1,verified,none,few,none,no,medium,train_none_few_none_no_medium_v01.simpl
+none,few,none,no,medium,2,verified,none,few,none,no,medium,train_none_few_none_no_medium_v02.simpl
+none,few,none,no,medium,3,verified,none,few,none,no,medium,train_none_few_none_no_medium_v03.simpl
+none,few,none,no,large,1,verified,none,few,none,no,large,train_none_few_none_no_large_v01.simpl
+none,few,none,no,large,2,verified,none,few,none,no,large,train_none_few_none_no_large_v02.simpl
+none,few,none,no,large,3,verified,none,few,none,no,large,train_none_few_none_no_large_v03.simpl
+none,few,none,has,tiny,1,verified,none,few,none,has,tiny,train_none_few_none_has_tiny_v01.simpl
+none,few,none,has,tiny,2,verified,none,few,none,has,tiny,train_none_few_none_has_tiny_v02.simpl
+none,few,none,has,tiny,3,verified,none,few,none,has,tiny,train_none_few_none_has_tiny_v03.simpl
+none,few,none,has,medium,1,verified,none,few,none,has,medium,train_none_few_none_has_medium_v01.simpl
+none,few,none,has,medium,2,verified,none,few,none,has,medium,train_none_few_none_has_medium_v02.simpl
+none,few,none,has,medium,3,verified,none,few,none,has,medium,train_none_few_none_has_medium_v03.simpl
+none,few,none,has,large,1,verified,none,few,none,has,large,train_none_few_none_has_large_v01.simpl
+none,few,none,has,large,2,verified,none,few,none,has,large,train_none_few_none_has_large_v02.simpl
+none,few,none,has,large,3,verified,none,few,none,has,large,train_none_few_none_has_large_v03.simpl
+none,few,light,no,tiny,1,verified,none,few,light,no,tiny,train_none_few_light_no_tiny_v01.simpl
+none,few,light,no,tiny,2,verified,none,few,light,no,tiny,train_none_few_light_no_tiny_v02.simpl
+none,few,light,no,tiny,3,verified,none,few,light,no,tiny,train_none_few_light_no_tiny_v03.simpl
+none,few,light,no,medium,1,verified,none,few,light,no,medium,train_none_few_light_no_medium_v01.simpl
+none,few,light,no,medium,2,verified,none,few,light,no,medium,train_none_few_light_no_medium_v02.simpl
+none,few,light,no,medium,3,verified,none,few,light,no,medium,train_none_few_light_no_medium_v03.simpl
+none,few,light,no,large,1,verified,none,few,light,no,large,train_none_few_light_no_large_v01.simpl
+none,few,light,no,large,2,verified,none,few,light,no,large,train_none_few_light_no_large_v02.simpl
+none,few,light,no,large,3,verified,none,few,light,no,large,train_none_few_light_no_large_v03.simpl
+none,few,light,has,tiny,1,verified,none,few,light,has,tiny,train_none_few_light_has_tiny_v01.simpl
+none,few,light,has,tiny,2,verified,none,few,light,has,tiny,train_none_few_light_has_tiny_v02.simpl
+none,few,light,has,tiny,3,verified,none,few,light,has,tiny,train_none_few_light_has_tiny_v03.simpl
+none,few,light,has,medium,1,verified,none,few,light,has,medium,train_none_few_light_has_medium_v01.simpl
+none,few,light,has,medium,2,verified,none,few,light,has,medium,train_none_few_light_has_medium_v02.simpl
+none,few,light,has,medium,3,verified,none,few,light,has,medium,train_none_few_light_has_medium_v03.simpl
+none,few,light,has,large,1,verified,none,few,light,has,large,train_none_few_light_has_large_v01.simpl
+none,few,light,has,large,2,verified,none,few,light,has,large,train_none_few_light_has_large_v02.simpl
+none,few,light,has,large,3,verified,none,few,light,has,large,train_none_few_light_has_large_v03.simpl
+none,few,dominated,no,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+none,few,dominated,no,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+none,few,dominated,no,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+none,few,dominated,no,medium,1,verified,none,few,dominated,no,medium,train_none_few_dominated_no_medium_v01.simpl
+none,few,dominated,no,medium,2,verified,none,few,dominated,no,medium,train_none_few_dominated_no_medium_v02.simpl
+none,few,dominated,no,medium,3,verified,none,few,dominated,no,medium,train_none_few_dominated_no_medium_v03.simpl
+none,few,dominated,no,large,1,verified,none,few,dominated,no,large,train_none_few_dominated_no_large_v01.simpl
+none,few,dominated,no,large,2,verified,none,few,dominated,no,large,train_none_few_dominated_no_large_v02.simpl
+none,few,dominated,no,large,3,verified,none,few,dominated,no,large,train_none_few_dominated_no_large_v03.simpl
+none,few,dominated,has,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+none,few,dominated,has,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+none,few,dominated,has,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+none,few,dominated,has,medium,1,verified,none,few,dominated,has,medium,train_none_few_dominated_has_medium_v01.simpl
+none,few,dominated,has,medium,2,verified,none,few,dominated,has,medium,train_none_few_dominated_has_medium_v02.simpl
+none,few,dominated,has,medium,3,verified,none,few,dominated,has,medium,train_none_few_dominated_has_medium_v03.simpl
+none,few,dominated,has,large,1,verified,none,few,dominated,has,large,train_none_few_dominated_has_large_v01.simpl
+none,few,dominated,has,large,2,verified,none,few,dominated,has,large,train_none_few_dominated_has_large_v02.simpl
+none,few,dominated,has,large,3,verified,none,few,dominated,has,large,train_none_few_dominated_has_large_v03.simpl
+none,many,none,no,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+none,many,none,no,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+none,many,none,no,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+none,many,none,no,medium,1,verified,none,many,none,no,medium,train_none_many_none_no_medium_v01.simpl
+none,many,none,no,medium,2,verified,none,many,none,no,medium,train_none_many_none_no_medium_v02.simpl
+none,many,none,no,medium,3,verified,none,many,none,no,medium,train_none_many_none_no_medium_v03.simpl
+none,many,none,no,large,1,verified,none,many,none,no,large,train_none_many_none_no_large_v01.simpl
+none,many,none,no,large,2,verified,none,many,none,no,large,train_none_many_none_no_large_v02.simpl
+none,many,none,no,large,3,verified,none,many,none,no,large,train_none_many_none_no_large_v03.simpl
+none,many,none,has,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+none,many,none,has,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+none,many,none,has,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+none,many,none,has,medium,1,verified,none,many,none,has,medium,train_none_many_none_has_medium_v01.simpl
+none,many,none,has,medium,2,verified,none,many,none,has,medium,train_none_many_none_has_medium_v02.simpl
+none,many,none,has,medium,3,verified,none,many,none,has,medium,train_none_many_none_has_medium_v03.simpl
+none,many,none,has,large,1,verified,none,many,none,has,large,train_none_many_none_has_large_v01.simpl
+none,many,none,has,large,2,verified,none,many,none,has,large,train_none_many_none_has_large_v02.simpl
+none,many,none,has,large,3,verified,none,many,none,has,large,train_none_many_none_has_large_v03.simpl
+none,many,light,no,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+none,many,light,no,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+none,many,light,no,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+none,many,light,no,medium,1,verified,none,many,light,no,medium,train_none_many_light_no_medium_v01.simpl
+none,many,light,no,medium,2,verified,none,many,light,no,medium,train_none_many_light_no_medium_v02.simpl
+none,many,light,no,medium,3,verified,none,many,light,no,medium,train_none_many_light_no_medium_v03.simpl
+none,many,light,no,large,1,verified,none,many,light,no,large,train_none_many_light_no_large_v01.simpl
+none,many,light,no,large,2,verified,none,many,light,no,large,train_none_many_light_no_large_v02.simpl
+none,many,light,no,large,3,verified,none,many,light,no,large,train_none_many_light_no_large_v03.simpl
+none,many,light,has,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+none,many,light,has,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+none,many,light,has,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+none,many,light,has,medium,1,verified,none,many,light,has,medium,train_none_many_light_has_medium_v01.simpl
+none,many,light,has,medium,2,verified,none,many,light,has,medium,train_none_many_light_has_medium_v02.simpl
+none,many,light,has,medium,3,verified,none,many,light,has,medium,train_none_many_light_has_medium_v03.simpl
+none,many,light,has,large,1,verified,none,many,light,has,large,train_none_many_light_has_large_v01.simpl
+none,many,light,has,large,2,verified,none,many,light,has,large,train_none_many_light_has_large_v02.simpl
+none,many,light,has,large,3,verified,none,many,light,has,large,train_none_many_light_has_large_v03.simpl
+none,many,dominated,no,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+none,many,dominated,no,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+none,many,dominated,no,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+none,many,dominated,no,medium,1,verified,none,many,dominated,no,medium,train_none_many_dominated_no_medium_v01.simpl
+none,many,dominated,no,medium,2,verified,none,many,dominated,no,medium,train_none_many_dominated_no_medium_v02.simpl
+none,many,dominated,no,medium,3,verified,none,many,dominated,no,medium,train_none_many_dominated_no_medium_v03.simpl
+none,many,dominated,no,large,1,verified,none,many,dominated,no,large,train_none_many_dominated_no_large_v01.simpl
+none,many,dominated,no,large,2,verified,none,many,dominated,no,large,train_none_many_dominated_no_large_v02.simpl
+none,many,dominated,no,large,3,verified,none,many,dominated,no,large,train_none_many_dominated_no_large_v03.simpl
+none,many,dominated,has,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+none,many,dominated,has,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+none,many,dominated,has,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+none,many,dominated,has,medium,1,verified,none,many,dominated,has,medium,train_none_many_dominated_has_medium_v01.simpl
+none,many,dominated,has,medium,2,verified,none,many,dominated,has,medium,train_none_many_dominated_has_medium_v02.simpl
+none,many,dominated,has,medium,3,verified,none,many,dominated,has,medium,train_none_many_dominated_has_medium_v03.simpl
+none,many,dominated,has,large,1,verified,none,many,dominated,has,large,train_none_many_dominated_has_large_v01.simpl
+none,many,dominated,has,large,2,verified,none,many,dominated,has,large,train_none_many_dominated_has_large_v02.simpl
+none,many,dominated,has,large,3,verified,none,many,dominated,has,large,train_none_many_dominated_has_large_v03.simpl
+shallow,none,none,no,tiny,1,verified,shallow,none,none,no,tiny,train_shallow_none_none_no_tiny_v01.simpl
+shallow,none,none,no,tiny,2,verified,shallow,none,none,no,tiny,train_shallow_none_none_no_tiny_v02.simpl
+shallow,none,none,no,tiny,3,verified,shallow,none,none,no,tiny,train_shallow_none_none_no_tiny_v03.simpl
+shallow,none,none,no,medium,1,verified,shallow,none,none,no,medium,train_shallow_none_none_no_medium_v01.simpl
+shallow,none,none,no,medium,2,verified,shallow,none,none,no,medium,train_shallow_none_none_no_medium_v02.simpl
+shallow,none,none,no,medium,3,verified,shallow,none,none,no,medium,train_shallow_none_none_no_medium_v03.simpl
+shallow,none,none,no,large,1,verified,shallow,none,none,no,large,train_shallow_none_none_no_large_v01.simpl
+shallow,none,none,no,large,2,verified,shallow,none,none,no,large,train_shallow_none_none_no_large_v02.simpl
+shallow,none,none,no,large,3,verified,shallow,none,none,no,large,train_shallow_none_none_no_large_v03.simpl
+shallow,none,none,has,tiny,1,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+shallow,none,none,has,tiny,2,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+shallow,none,none,has,tiny,3,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+shallow,none,none,has,medium,1,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+shallow,none,none,has,medium,2,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+shallow,none,none,has,medium,3,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+shallow,none,none,has,large,1,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+shallow,none,none,has,large,2,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+shallow,none,none,has,large,3,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+shallow,none,light,no,tiny,1,adt=light requires adt_ops>0 and adt_ops<=arithmetic_ops,,,,,,
+shallow,none,light,no,tiny,2,adt=light requires adt_ops>0 and adt_ops<=arithmetic_ops,,,,,,
+shallow,none,light,no,tiny,3,adt=light requires adt_ops>0 and adt_ops<=arithmetic_ops,,,,,,
+shallow,none,light,no,medium,1,adt=light requires adt_ops>0 and adt_ops<=arithmetic_ops,,,,,,
+shallow,none,light,no,medium,2,adt=light requires adt_ops>0 and adt_ops<=arithmetic_ops,,,,,,
+shallow,none,light,no,medium,3,adt=light requires adt_ops>0 and adt_ops<=arithmetic_ops,,,,,,
+shallow,none,light,no,large,1,adt=light requires adt_ops>0 and adt_ops<=arithmetic_ops,,,,,,
+shallow,none,light,no,large,2,adt=light requires adt_ops>0 and adt_ops<=arithmetic_ops,,,,,,
+shallow,none,light,no,large,3,adt=light requires adt_ops>0 and adt_ops<=arithmetic_ops,,,,,,
+shallow,none,light,has,tiny,1,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+shallow,none,light,has,tiny,2,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+shallow,none,light,has,tiny,3,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+shallow,none,light,has,medium,1,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+shallow,none,light,has,medium,2,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+shallow,none,light,has,medium,3,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+shallow,none,light,has,large,1,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+shallow,none,light,has,large,2,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+shallow,none,light,has,large,3,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+shallow,none,dominated,no,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,none,dominated,no,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,none,dominated,no,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,none,dominated,no,medium,1,verified,shallow,none,dominated,no,medium,train_shallow_none_dominated_no_medium_v01.simpl
+shallow,none,dominated,no,medium,2,verified,shallow,none,dominated,no,medium,train_shallow_none_dominated_no_medium_v02.simpl
+shallow,none,dominated,no,medium,3,verified,shallow,none,dominated,no,medium,train_shallow_none_dominated_no_medium_v03.simpl
+shallow,none,dominated,no,large,1,verified,shallow,none,dominated,no,large,train_shallow_none_dominated_no_large_v01.simpl
+shallow,none,dominated,no,large,2,verified,shallow,none,dominated,no,large,train_shallow_none_dominated_no_large_v02.simpl
+shallow,none,dominated,no,large,3,verified,shallow,none,dominated,no,large,train_shallow_none_dominated_no_large_v03.simpl
+shallow,none,dominated,has,tiny,1,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+shallow,none,dominated,has,tiny,2,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+shallow,none,dominated,has,tiny,3,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+shallow,none,dominated,has,medium,1,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+shallow,none,dominated,has,medium,2,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+shallow,none,dominated,has,medium,3,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+shallow,none,dominated,has,large,1,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+shallow,none,dominated,has,large,2,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+shallow,none,dominated,has,large,3,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+shallow,few,none,no,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,few,none,no,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,few,none,no,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,few,none,no,medium,1,verified,shallow,few,none,no,medium,train_shallow_few_none_no_medium_v01.simpl
+shallow,few,none,no,medium,2,verified,shallow,few,none,no,medium,train_shallow_few_none_no_medium_v02.simpl
+shallow,few,none,no,medium,3,verified,shallow,few,none,no,medium,train_shallow_few_none_no_medium_v03.simpl
+shallow,few,none,no,large,1,verified,shallow,few,none,no,large,train_shallow_few_none_no_large_v01.simpl
+shallow,few,none,no,large,2,verified,shallow,few,none,no,large,train_shallow_few_none_no_large_v02.simpl
+shallow,few,none,no,large,3,verified,shallow,few,none,no,large,train_shallow_few_none_no_large_v03.simpl
+shallow,few,none,has,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,few,none,has,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,few,none,has,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,few,none,has,medium,1,verified,shallow,few,none,has,medium,train_shallow_few_none_has_medium_v01.simpl
+shallow,few,none,has,medium,2,verified,shallow,few,none,has,medium,train_shallow_few_none_has_medium_v02.simpl
+shallow,few,none,has,medium,3,verified,shallow,few,none,has,medium,train_shallow_few_none_has_medium_v03.simpl
+shallow,few,none,has,large,1,verified,shallow,few,none,has,large,train_shallow_few_none_has_large_v01.simpl
+shallow,few,none,has,large,2,verified,shallow,few,none,has,large,train_shallow_few_none_has_large_v02.simpl
+shallow,few,none,has,large,3,verified,shallow,few,none,has,large,train_shallow_few_none_has_large_v03.simpl
+shallow,few,light,no,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,few,light,no,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,few,light,no,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,few,light,no,medium,1,verified,shallow,few,light,no,medium,train_shallow_few_light_no_medium_v01.simpl
+shallow,few,light,no,medium,2,verified,shallow,few,light,no,medium,train_shallow_few_light_no_medium_v02.simpl
+shallow,few,light,no,medium,3,verified,shallow,few,light,no,medium,train_shallow_few_light_no_medium_v03.simpl
+shallow,few,light,no,large,1,verified,shallow,few,light,no,large,train_shallow_few_light_no_large_v01.simpl
+shallow,few,light,no,large,2,verified,shallow,few,light,no,large,train_shallow_few_light_no_large_v02.simpl
+shallow,few,light,no,large,3,verified,shallow,few,light,no,large,train_shallow_few_light_no_large_v03.simpl
+shallow,few,light,has,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,few,light,has,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,few,light,has,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,few,light,has,medium,1,verified,shallow,few,light,has,medium,train_shallow_few_light_has_medium_v01.simpl
+shallow,few,light,has,medium,2,verified,shallow,few,light,has,medium,train_shallow_few_light_has_medium_v02.simpl
+shallow,few,light,has,medium,3,verified,shallow,few,light,has,medium,train_shallow_few_light_has_medium_v03.simpl
+shallow,few,light,has,large,1,verified,shallow,few,light,has,large,train_shallow_few_light_has_large_v01.simpl
+shallow,few,light,has,large,2,verified,shallow,few,light,has,large,train_shallow_few_light_has_large_v02.simpl
+shallow,few,light,has,large,3,verified,shallow,few,light,has,large,train_shallow_few_light_has_large_v03.simpl
+shallow,few,dominated,no,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,few,dominated,no,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,few,dominated,no,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,few,dominated,no,medium,1,verified,shallow,few,dominated,no,medium,train_shallow_few_dominated_no_medium_v01.simpl
+shallow,few,dominated,no,medium,2,verified,shallow,few,dominated,no,medium,train_shallow_few_dominated_no_medium_v02.simpl
+shallow,few,dominated,no,medium,3,verified,shallow,few,dominated,no,medium,train_shallow_few_dominated_no_medium_v03.simpl
+shallow,few,dominated,no,large,1,verified,shallow,few,dominated,no,large,train_shallow_few_dominated_no_large_v01.simpl
+shallow,few,dominated,no,large,2,verified,shallow,few,dominated,no,large,train_shallow_few_dominated_no_large_v02.simpl
+shallow,few,dominated,no,large,3,verified,shallow,few,dominated,no,large,train_shallow_few_dominated_no_large_v03.simpl
+shallow,few,dominated,has,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,few,dominated,has,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,few,dominated,has,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,few,dominated,has,medium,1,verified,shallow,few,dominated,has,medium,train_shallow_few_dominated_has_medium_v01.simpl
+shallow,few,dominated,has,medium,2,verified,shallow,few,dominated,has,medium,train_shallow_few_dominated_has_medium_v02.simpl
+shallow,few,dominated,has,medium,3,verified,shallow,few,dominated,has,medium,train_shallow_few_dominated_has_medium_v03.simpl
+shallow,few,dominated,has,large,1,verified,shallow,few,dominated,has,large,train_shallow_few_dominated_has_large_v01.simpl
+shallow,few,dominated,has,large,2,verified,shallow,few,dominated,has,large,train_shallow_few_dominated_has_large_v02.simpl
+shallow,few,dominated,has,large,3,verified,shallow,few,dominated,has,large,train_shallow_few_dominated_has_large_v03.simpl
+shallow,many,none,no,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,many,none,no,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,many,none,no,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,many,none,no,medium,1,verified,shallow,many,none,no,medium,train_shallow_many_none_no_medium_v01.simpl
+shallow,many,none,no,medium,2,verified,shallow,many,none,no,medium,train_shallow_many_none_no_medium_v02.simpl
+shallow,many,none,no,medium,3,verified,shallow,many,none,no,medium,train_shallow_many_none_no_medium_v03.simpl
+shallow,many,none,no,large,1,verified,shallow,many,none,no,large,train_shallow_many_none_no_large_v01.simpl
+shallow,many,none,no,large,2,verified,shallow,many,none,no,large,train_shallow_many_none_no_large_v02.simpl
+shallow,many,none,no,large,3,verified,shallow,many,none,no,large,train_shallow_many_none_no_large_v03.simpl
+shallow,many,none,has,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,many,none,has,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,many,none,has,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,many,none,has,medium,1,verified,shallow,many,none,has,medium,train_shallow_many_none_has_medium_v01.simpl
+shallow,many,none,has,medium,2,verified,shallow,many,none,has,medium,train_shallow_many_none_has_medium_v02.simpl
+shallow,many,none,has,medium,3,verified,shallow,many,none,has,medium,train_shallow_many_none_has_medium_v03.simpl
+shallow,many,none,has,large,1,verified,shallow,many,none,has,large,train_shallow_many_none_has_large_v01.simpl
+shallow,many,none,has,large,2,verified,shallow,many,none,has,large,train_shallow_many_none_has_large_v02.simpl
+shallow,many,none,has,large,3,verified,shallow,many,none,has,large,train_shallow_many_none_has_large_v03.simpl
+shallow,many,light,no,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,many,light,no,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,many,light,no,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,many,light,no,medium,1,verified,shallow,many,light,no,medium,train_shallow_many_light_no_medium_v01.simpl
+shallow,many,light,no,medium,2,verified,shallow,many,light,no,medium,train_shallow_many_light_no_medium_v02.simpl
+shallow,many,light,no,medium,3,verified,shallow,many,light,no,medium,train_shallow_many_light_no_medium_v03.simpl
+shallow,many,light,no,large,1,verified,shallow,many,light,no,large,train_shallow_many_light_no_large_v01.simpl
+shallow,many,light,no,large,2,verified,shallow,many,light,no,large,train_shallow_many_light_no_large_v02.simpl
+shallow,many,light,no,large,3,verified,shallow,many,light,no,large,train_shallow_many_light_no_large_v03.simpl
+shallow,many,light,has,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,many,light,has,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,many,light,has,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,many,light,has,medium,1,verified,shallow,many,light,has,medium,train_shallow_many_light_has_medium_v01.simpl
+shallow,many,light,has,medium,2,verified,shallow,many,light,has,medium,train_shallow_many_light_has_medium_v02.simpl
+shallow,many,light,has,medium,3,verified,shallow,many,light,has,medium,train_shallow_many_light_has_medium_v03.simpl
+shallow,many,light,has,large,1,verified,shallow,many,light,has,large,train_shallow_many_light_has_large_v01.simpl
+shallow,many,light,has,large,2,verified,shallow,many,light,has,large,train_shallow_many_light_has_large_v02.simpl
+shallow,many,light,has,large,3,verified,shallow,many,light,has,large,train_shallow_many_light_has_large_v03.simpl
+shallow,many,dominated,no,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,many,dominated,no,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,many,dominated,no,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,many,dominated,no,medium,1,verified,shallow,many,dominated,no,medium,train_shallow_many_dominated_no_medium_v01.simpl
+shallow,many,dominated,no,medium,2,verified,shallow,many,dominated,no,medium,train_shallow_many_dominated_no_medium_v02.simpl
+shallow,many,dominated,no,medium,3,verified,shallow,many,dominated,no,medium,train_shallow_many_dominated_no_medium_v03.simpl
+shallow,many,dominated,no,large,1,verified,shallow,many,dominated,no,large,train_shallow_many_dominated_no_large_v01.simpl
+shallow,many,dominated,no,large,2,verified,shallow,many,dominated,no,large,train_shallow_many_dominated_no_large_v02.simpl
+shallow,many,dominated,no,large,3,verified,shallow,many,dominated,no,large,train_shallow_many_dominated_no_large_v03.simpl
+shallow,many,dominated,has,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,many,dominated,has,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,many,dominated,has,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+shallow,many,dominated,has,medium,1,verified,shallow,many,dominated,has,medium,train_shallow_many_dominated_has_medium_v01.simpl
+shallow,many,dominated,has,medium,2,verified,shallow,many,dominated,has,medium,train_shallow_many_dominated_has_medium_v02.simpl
+shallow,many,dominated,has,medium,3,verified,shallow,many,dominated,has,medium,train_shallow_many_dominated_has_medium_v03.simpl
+shallow,many,dominated,has,large,1,verified,shallow,many,dominated,has,large,train_shallow_many_dominated_has_large_v01.simpl
+shallow,many,dominated,has,large,2,verified,shallow,many,dominated,has,large,train_shallow_many_dominated_has_large_v02.simpl
+shallow,many,dominated,has,large,3,verified,shallow,many,dominated,has,large,train_shallow_many_dominated_has_large_v03.simpl
+deep,none,none,no,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,none,none,no,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,none,none,no,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,none,none,no,medium,1,verified,deep,none,none,no,medium,train_deep_none_none_no_medium_v01.simpl
+deep,none,none,no,medium,2,verified,deep,none,none,no,medium,train_deep_none_none_no_medium_v02.simpl
+deep,none,none,no,medium,3,verified,deep,none,none,no,medium,train_deep_none_none_no_medium_v03.simpl
+deep,none,none,no,large,1,verified,deep,none,none,no,large,train_deep_none_none_no_large_v01.simpl
+deep,none,none,no,large,2,verified,deep,none,none,no,large,train_deep_none_none_no_large_v02.simpl
+deep,none,none,no,large,3,verified,deep,none,none,no,large,train_deep_none_none_no_large_v03.simpl
+deep,none,none,has,tiny,1,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+deep,none,none,has,tiny,2,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+deep,none,none,has,tiny,3,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+deep,none,none,has,medium,1,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+deep,none,none,has,medium,2,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+deep,none,none,has,medium,3,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+deep,none,none,has,large,1,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+deep,none,none,has,large,2,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+deep,none,none,has,large,3,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+deep,none,light,no,tiny,1,adt=light requires adt_ops>0 and adt_ops<=arithmetic_ops,,,,,,
+deep,none,light,no,tiny,2,adt=light requires adt_ops>0 and adt_ops<=arithmetic_ops,,,,,,
+deep,none,light,no,tiny,3,adt=light requires adt_ops>0 and adt_ops<=arithmetic_ops,,,,,,
+deep,none,light,no,medium,1,adt=light requires adt_ops>0 and adt_ops<=arithmetic_ops,,,,,,
+deep,none,light,no,medium,2,adt=light requires adt_ops>0 and adt_ops<=arithmetic_ops,,,,,,
+deep,none,light,no,medium,3,adt=light requires adt_ops>0 and adt_ops<=arithmetic_ops,,,,,,
+deep,none,light,no,large,1,adt=light requires adt_ops>0 and adt_ops<=arithmetic_ops,,,,,,
+deep,none,light,no,large,2,adt=light requires adt_ops>0 and adt_ops<=arithmetic_ops,,,,,,
+deep,none,light,no,large,3,adt=light requires adt_ops>0 and adt_ops<=arithmetic_ops,,,,,,
+deep,none,light,has,tiny,1,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+deep,none,light,has,tiny,2,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+deep,none,light,has,tiny,3,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+deep,none,light,has,medium,1,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+deep,none,light,has,medium,2,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+deep,none,light,has,medium,3,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+deep,none,light,has,large,1,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+deep,none,light,has,large,2,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+deep,none,light,has,large,3,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+deep,none,dominated,no,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,none,dominated,no,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,none,dominated,no,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,none,dominated,no,medium,1,verified,deep,none,dominated,no,medium,train_deep_none_dominated_no_medium_v01.simpl
+deep,none,dominated,no,medium,2,verified,deep,none,dominated,no,medium,train_deep_none_dominated_no_medium_v02.simpl
+deep,none,dominated,no,medium,3,verified,deep,none,dominated,no,medium,train_deep_none_dominated_no_medium_v03.simpl
+deep,none,dominated,no,large,1,verified,deep,none,dominated,no,large,train_deep_none_dominated_no_large_v01.simpl
+deep,none,dominated,no,large,2,verified,deep,none,dominated,no,large,train_deep_none_dominated_no_large_v02.simpl
+deep,none,dominated,no,large,3,verified,deep,none,dominated,no,large,train_deep_none_dominated_no_large_v03.simpl
+deep,none,dominated,has,tiny,1,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+deep,none,dominated,has,tiny,2,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+deep,none,dominated,has,tiny,3,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+deep,none,dominated,has,medium,1,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+deep,none,dominated,has,medium,2,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+deep,none,dominated,has,medium,3,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+deep,none,dominated,has,large,1,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+deep,none,dominated,has,large,2,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+deep,none,dominated,has,large,3,const=has requires at least one arithmetic binop in semantic.c,,,,,,
+deep,few,none,no,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,few,none,no,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,few,none,no,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,few,none,no,medium,1,verified,deep,few,none,no,medium,train_deep_few_none_no_medium_v01.simpl
+deep,few,none,no,medium,2,verified,deep,few,none,no,medium,train_deep_few_none_no_medium_v02.simpl
+deep,few,none,no,medium,3,verified,deep,few,none,no,medium,train_deep_few_none_no_medium_v03.simpl
+deep,few,none,no,large,1,verified,deep,few,none,no,large,train_deep_few_none_no_large_v01.simpl
+deep,few,none,no,large,2,verified,deep,few,none,no,large,train_deep_few_none_no_large_v02.simpl
+deep,few,none,no,large,3,verified,deep,few,none,no,large,train_deep_few_none_no_large_v03.simpl
+deep,few,none,has,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,few,none,has,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,few,none,has,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,few,none,has,medium,1,verified,deep,few,none,has,medium,train_deep_few_none_has_medium_v01.simpl
+deep,few,none,has,medium,2,verified,deep,few,none,has,medium,train_deep_few_none_has_medium_v02.simpl
+deep,few,none,has,medium,3,verified,deep,few,none,has,medium,train_deep_few_none_has_medium_v03.simpl
+deep,few,none,has,large,1,verified,deep,few,none,has,large,train_deep_few_none_has_large_v01.simpl
+deep,few,none,has,large,2,verified,deep,few,none,has,large,train_deep_few_none_has_large_v02.simpl
+deep,few,none,has,large,3,verified,deep,few,none,has,large,train_deep_few_none_has_large_v03.simpl
+deep,few,light,no,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,few,light,no,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,few,light,no,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,few,light,no,medium,1,verified,deep,few,light,no,medium,train_deep_few_light_no_medium_v01.simpl
+deep,few,light,no,medium,2,verified,deep,few,light,no,medium,train_deep_few_light_no_medium_v02.simpl
+deep,few,light,no,medium,3,verified,deep,few,light,no,medium,train_deep_few_light_no_medium_v03.simpl
+deep,few,light,no,large,1,verified,deep,few,light,no,large,train_deep_few_light_no_large_v01.simpl
+deep,few,light,no,large,2,verified,deep,few,light,no,large,train_deep_few_light_no_large_v02.simpl
+deep,few,light,no,large,3,verified,deep,few,light,no,large,train_deep_few_light_no_large_v03.simpl
+deep,few,light,has,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,few,light,has,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,few,light,has,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,few,light,has,medium,1,verified,deep,few,light,has,medium,train_deep_few_light_has_medium_v01.simpl
+deep,few,light,has,medium,2,verified,deep,few,light,has,medium,train_deep_few_light_has_medium_v02.simpl
+deep,few,light,has,medium,3,verified,deep,few,light,has,medium,train_deep_few_light_has_medium_v03.simpl
+deep,few,light,has,large,1,verified,deep,few,light,has,large,train_deep_few_light_has_large_v01.simpl
+deep,few,light,has,large,2,verified,deep,few,light,has,large,train_deep_few_light_has_large_v02.simpl
+deep,few,light,has,large,3,verified,deep,few,light,has,large,train_deep_few_light_has_large_v03.simpl
+deep,few,dominated,no,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,few,dominated,no,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,few,dominated,no,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,few,dominated,no,medium,1,verified,deep,few,dominated,no,medium,train_deep_few_dominated_no_medium_v01.simpl
+deep,few,dominated,no,medium,2,verified,deep,few,dominated,no,medium,train_deep_few_dominated_no_medium_v02.simpl
+deep,few,dominated,no,medium,3,verified,deep,few,dominated,no,medium,train_deep_few_dominated_no_medium_v03.simpl
+deep,few,dominated,no,large,1,verified,deep,few,dominated,no,large,train_deep_few_dominated_no_large_v01.simpl
+deep,few,dominated,no,large,2,verified,deep,few,dominated,no,large,train_deep_few_dominated_no_large_v02.simpl
+deep,few,dominated,no,large,3,verified,deep,few,dominated,no,large,train_deep_few_dominated_no_large_v03.simpl
+deep,few,dominated,has,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,few,dominated,has,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,few,dominated,has,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,few,dominated,has,medium,1,verified,deep,few,dominated,has,medium,train_deep_few_dominated_has_medium_v01.simpl
+deep,few,dominated,has,medium,2,verified,deep,few,dominated,has,medium,train_deep_few_dominated_has_medium_v02.simpl
+deep,few,dominated,has,medium,3,verified,deep,few,dominated,has,medium,train_deep_few_dominated_has_medium_v03.simpl
+deep,few,dominated,has,large,1,verified,deep,few,dominated,has,large,train_deep_few_dominated_has_large_v01.simpl
+deep,few,dominated,has,large,2,verified,deep,few,dominated,has,large,train_deep_few_dominated_has_large_v02.simpl
+deep,few,dominated,has,large,3,verified,deep,few,dominated,has,large,train_deep_few_dominated_has_large_v03.simpl
+deep,many,none,no,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,many,none,no,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,many,none,no,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,many,none,no,medium,1,verified,deep,many,none,no,medium,train_deep_many_none_no_medium_v01.simpl
+deep,many,none,no,medium,2,verified,deep,many,none,no,medium,train_deep_many_none_no_medium_v02.simpl
+deep,many,none,no,medium,3,verified,deep,many,none,no,medium,train_deep_many_none_no_medium_v03.simpl
+deep,many,none,no,large,1,verified,deep,many,none,no,large,train_deep_many_none_no_large_v01.simpl
+deep,many,none,no,large,2,verified,deep,many,none,no,large,train_deep_many_none_no_large_v02.simpl
+deep,many,none,no,large,3,verified,deep,many,none,no,large,train_deep_many_none_no_large_v03.simpl
+deep,many,none,has,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,many,none,has,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,many,none,has,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,many,none,has,medium,1,verified,deep,many,none,has,medium,train_deep_many_none_has_medium_v01.simpl
+deep,many,none,has,medium,2,verified,deep,many,none,has,medium,train_deep_many_none_has_medium_v02.simpl
+deep,many,none,has,medium,3,verified,deep,many,none,has,medium,train_deep_many_none_has_medium_v03.simpl
+deep,many,none,has,large,1,verified,deep,many,none,has,large,train_deep_many_none_has_large_v01.simpl
+deep,many,none,has,large,2,verified,deep,many,none,has,large,train_deep_many_none_has_large_v02.simpl
+deep,many,none,has,large,3,verified,deep,many,none,has,large,train_deep_many_none_has_large_v03.simpl
+deep,many,light,no,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,many,light,no,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,many,light,no,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,many,light,no,medium,1,verified,deep,many,light,no,medium,train_deep_many_light_no_medium_v01.simpl
+deep,many,light,no,medium,2,verified,deep,many,light,no,medium,train_deep_many_light_no_medium_v02.simpl
+deep,many,light,no,medium,3,verified,deep,many,light,no,medium,train_deep_many_light_no_medium_v03.simpl
+deep,many,light,no,large,1,verified,deep,many,light,no,large,train_deep_many_light_no_large_v01.simpl
+deep,many,light,no,large,2,verified,deep,many,light,no,large,train_deep_many_light_no_large_v02.simpl
+deep,many,light,no,large,3,verified,deep,many,light,no,large,train_deep_many_light_no_large_v03.simpl
+deep,many,light,has,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,many,light,has,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,many,light,has,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,many,light,has,medium,1,verified,deep,many,light,has,medium,train_deep_many_light_has_medium_v01.simpl
+deep,many,light,has,medium,2,verified,deep,many,light,has,medium,train_deep_many_light_has_medium_v02.simpl
+deep,many,light,has,medium,3,verified,deep,many,light,has,medium,train_deep_many_light_has_medium_v03.simpl
+deep,many,light,has,large,1,verified,deep,many,light,has,large,train_deep_many_light_has_large_v01.simpl
+deep,many,light,has,large,2,verified,deep,many,light,has,large,train_deep_many_light_has_large_v02.simpl
+deep,many,light,has,large,3,verified,deep,many,light,has,large,train_deep_many_light_has_large_v03.simpl
+deep,many,dominated,no,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,many,dominated,no,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,many,dominated,no,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,many,dominated,no,medium,1,verified,deep,many,dominated,no,medium,train_deep_many_dominated_no_medium_v01.simpl
+deep,many,dominated,no,medium,2,verified,deep,many,dominated,no,medium,train_deep_many_dominated_no_medium_v02.simpl
+deep,many,dominated,no,medium,3,verified,deep,many,dominated,no,medium,train_deep_many_dominated_no_medium_v03.simpl
+deep,many,dominated,no,large,1,verified,deep,many,dominated,no,large,train_deep_many_dominated_no_large_v01.simpl
+deep,many,dominated,no,large,2,verified,deep,many,dominated,no,large,train_deep_many_dominated_no_large_v02.simpl
+deep,many,dominated,no,large,3,verified,deep,many,dominated,no,large,train_deep_many_dominated_no_large_v03.simpl
+deep,many,dominated,has,tiny,1,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,many,dominated,has,tiny,2,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,many,dominated,has,tiny,3,minimum IR for this variant already exceeds the requested size bucket,,,,,,
+deep,many,dominated,has,medium,1,verified,deep,many,dominated,has,medium,train_deep_many_dominated_has_medium_v01.simpl
+deep,many,dominated,has,medium,2,verified,deep,many,dominated,has,medium,train_deep_many_dominated_has_medium_v02.simpl
+deep,many,dominated,has,medium,3,verified,deep,many,dominated,has,medium,train_deep_many_dominated_has_medium_v03.simpl
+deep,many,dominated,has,large,1,verified,deep,many,dominated,has,large,train_deep_many_dominated_has_large_v01.simpl
+deep,many,dominated,has,large,2,verified,deep,many,dominated,has,large,train_deep_many_dominated_has_large_v02.simpl
+deep,many,dominated,has,large,3,verified,deep,many,dominated,has,large,train_deep_many_dominated_has_large_v03.simpl

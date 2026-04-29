@@ -1,0 +1,8 @@
+let a2 be 14
+let b2 be 15
+let c2 be 16
+set a2 to b2 + a2
+set b2 to a2 - b2
+let pad2_0 be 210
+let pad2_1 be 211
+let pad2_2 be 212

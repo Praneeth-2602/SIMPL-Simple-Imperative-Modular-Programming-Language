@@ -1,0 +1,17 @@
+let x be 0
+
+if 1 > 0 then
+    set x to 100
+else
+    set x to 999
+end
+
+print x
+
+if 0 > 1 then
+    set x to 999
+else
+    set x to 200
+end
+
+print x

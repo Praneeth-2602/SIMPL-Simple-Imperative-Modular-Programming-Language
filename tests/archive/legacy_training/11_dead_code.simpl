@@ -1,0 +1,8 @@
+let x be 10
+let y be 20
+let unused be 0
+
+set unused to x + y
+set x to x + 1
+
+print x
