@@ -90,4 +90,29 @@ int adt_graph_remove_edge(const char *name, int from, int to);  /* Returns -1 if
 /* Mark ADT state as unknown (after conditionals) */
 void adt_mark_unknown(const char *name);
 
+/* Function registry */
+#define MAX_FUNC_PARAMS 16
+#define MAX_FUNCTIONS   64
+
+typedef struct {
+    char name[64];
+    int  param_count;
+    char param_names[MAX_FUNC_PARAMS][32];
+    Type param_types[MAX_FUNC_PARAMS];
+    Type return_type;
+    int  defined;
+} FuncEntry;
+
+void func_table_init(void);
+int func_register(const char *name, int nparams,
+                  const char param_names[][32],
+                  const Type param_types[],
+                  Type return_type);
+FuncEntry *func_lookup(const char *name);
+int func_exists(const char *name);
+
+/* Save and restore symbol table head for function-local scopes. */
+struct Symbol *symtab_get_head(void);
+void symtab_set_head(struct Symbol *h);
+
 #endif

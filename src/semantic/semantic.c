@@ -1,15 +1,15 @@
 /* ============================================================
  * SIMPL Semantic Analyzer
  * ============================================================
- * 
+ *
  * This module performs semantic analysis that GCC CANNOT do:
- * 
+ *
  * 1. ADT Safety Guarantees
  * 2. Compile-Time Stack/Queue Underflow Detection
  * 3. Graph Edge Existence Tracking
  * 4. Transparent Optimization Decisions
  * 5. Semantic ADT Optimization
- * 
+ *
  * ============================================================ */
 
 #include "semantic.h"
@@ -17,10 +17,6 @@
 #include "../parser/ast.h"
 #include <stdio.h>
 #include <string.h>
-
-/* ============================================================
- * GLOBAL STATE
- * ============================================================ */
 
 static int error_count = 0;
 static int warning_count = 0;
@@ -33,10 +29,6 @@ static int constant_exprs = 0;
 static int current_loop_depth = 0;
 static int max_loop_depth = 0;
 static SemanticOptions current_opts = {0, 0, 0};
-
-/* ============================================================
- * ERROR/WARNING REPORTING
- * ============================================================ */
 
 static void semantic_error(const char *msg, const char *name) {
     fprintf(stderr, "Semantic error: %s", msg);
@@ -62,10 +54,6 @@ static void optimization_info(const char *msg) {
     }
     optimization_count++;
 }
-
-/* ============================================================
- * HELPER FUNCTIONS
- * ============================================================ */
 
 static Type adt_code_to_type(int code) {
     switch (code) {
@@ -133,10 +121,36 @@ static int get_constant_value(ASTNode *node, int *value) {
     return 0;
 }
 
-/* ============================================================
- * FEATURE 1: ADT SAFETY GUARANTEES
- * GCC cannot enforce these - C has no semantic model of ADTs
- * ============================================================ */
+static int count_args(ASTNode *node) {
+    if (!node) return 0;
+    if (node->type != AST_ARG_LIST) return 1;
+    if (!node->right) return 1;
+    return count_args(node->left) + 1;
+}
+
+static void collect_param_names(ASTNode *node,
+                                char names[][32],
+                                Type types[],
+                                int *count) {
+    if (!node || *count >= MAX_FUNC_PARAMS) return;
+
+    if (node->type == AST_PARAM_LIST) {
+        if (node->right) {
+            collect_param_names(node->left, names, types, count);
+            if (*count < MAX_FUNC_PARAMS && node->right->type == AST_PARAM) {
+                strncpy(names[*count], node->right->name, 31);
+                names[*count][31] = '\0';
+                types[*count] = TYPE_INT;
+                (*count)++;
+            }
+        } else if (node->left && node->left->type == AST_PARAM) {
+            strncpy(names[*count], node->left->name, 31);
+            names[*count][31] = '\0';
+            types[*count] = TYPE_INT;
+            (*count)++;
+        }
+    }
+}
 
 static Type check_expression_type(ASTNode *node) {
     if (!node) return TYPE_UNKNOWN;
@@ -145,6 +159,29 @@ static Type check_expression_type(ASTNode *node) {
         case AST_NUMBER:
             node->inferred_type = TYPE_INT;
             return TYPE_INT;
+
+        case AST_CALL: {
+            FuncEntry *fe = func_lookup(node->name);
+            int nargs;
+
+            if (!fe) {
+                semantic_error("call to undeclared function", node->name);
+                node->inferred_type = TYPE_INT;
+                return TYPE_INT;
+            }
+
+            nargs = count_args(node->left);
+            if (nargs != fe->param_count) {
+                char msg[128];
+                snprintf(msg, sizeof(msg),
+                         "function '%s' expects %d args, got %d",
+                         node->name, fe->param_count, nargs);
+                semantic_error(msg, NULL);
+            }
+
+            node->inferred_type = fe->return_type;
+            return fe->return_type;
+        }
 
         case AST_IDENTIFIER: {
             Type t = symtab_lookup(node->name);
@@ -192,22 +229,21 @@ static Type check_expression_type(ASTNode *node) {
     }
 }
 
-/* ============================================================
- * FEATURE 2 & 3: COMPILE-TIME STATE TRACKING
- * Detect underflow and invalid operations at COMPILE TIME!
- * ============================================================ */
-
 static void simulate_adt_operation(ASTNode *node) {
+    const char *name;
+    int op_code;
+    int arg1 = 0;
+    int arg2 = 0;
+    int has_arg1 = 0;
+    int has_arg2 = 0;
+
     if (!node || node->type != AST_ADT_OP) return;
 
-    const char *name = node->left->name;
-    int op_code = node->third->value;
+    name = node->left->name;
+    op_code = node->third->value;
 
-    int arg1 = 0, arg2 = 0;
-    int has_arg1 = 0, has_arg2 = 0;
-    
     if (node->right) {
-        if (node->right->type == AST_BINOP && 
+        if (node->right->type == AST_BINOP &&
             node->right->left && node->right->right) {
             has_arg1 = get_constant_value(node->right->left, &arg1);
             has_arg2 = get_constant_value(node->right->right, &arg2);
@@ -220,7 +256,7 @@ static void simulate_adt_operation(ASTNode *node) {
         case OP_PUSH: {
             int result = adt_stack_push(name);
             if (current_opts.verbose && result > 0) {
-                printf("  [SIM] Stack '%s' size: %d -> %d\n", 
+                printf("  [SIM] Stack '%s' size: %d -> %d\n",
                        name, result - 1, result);
             }
             break;
@@ -228,15 +264,15 @@ static void simulate_adt_operation(ASTNode *node) {
         case OP_POP: {
             int size_before = adt_stack_size(name);
             int result = adt_stack_pop(name);
-            
+
             if (result == -1) {
                 char msg[200];
                 snprintf(msg, sizeof(msg),
-                    "STACK UNDERFLOW at compile time! Stack '%s' is empty (size=%d)",
-                    name, size_before);
+                         "STACK UNDERFLOW at compile time! Stack '%s' is empty (size=%d)",
+                         name, size_before);
                 semantic_error(msg, NULL);
             } else if (current_opts.verbose && result >= 0) {
-                printf("  [SIM] Stack '%s' size: %d -> %d\n", 
+                printf("  [SIM] Stack '%s' size: %d -> %d\n",
                        name, size_before, result);
             }
             break;
@@ -245,7 +281,7 @@ static void simulate_adt_operation(ASTNode *node) {
         case OP_ENQUEUE: {
             int result = adt_queue_enqueue(name);
             if (current_opts.verbose && result > 0) {
-                printf("  [SIM] Queue '%s' size: %d -> %d\n", 
+                printf("  [SIM] Queue '%s' size: %d -> %d\n",
                        name, result - 1, result);
             }
             break;
@@ -253,15 +289,15 @@ static void simulate_adt_operation(ASTNode *node) {
         case OP_DEQUEUE: {
             int size_before = adt_queue_size(name);
             int result = adt_queue_dequeue(name);
-            
+
             if (result == -1) {
                 char msg[200];
                 snprintf(msg, sizeof(msg),
-                    "QUEUE UNDERFLOW at compile time! Queue '%s' is empty (size=%d)",
-                    name, size_before);
+                         "QUEUE UNDERFLOW at compile time! Queue '%s' is empty (size=%d)",
+                         name, size_before);
                 semantic_error(msg, NULL);
             } else if (current_opts.verbose && result >= 0) {
-                printf("  [SIM] Queue '%s' size: %d -> %d\n", 
+                printf("  [SIM] Queue '%s' size: %d -> %d\n",
                        name, size_before, result);
             }
             break;
@@ -271,7 +307,7 @@ static void simulate_adt_operation(ASTNode *node) {
             if (has_arg1 && has_arg2) {
                 int result = adt_graph_add_edge(name, arg1, arg2);
                 if (current_opts.verbose && result == 1) {
-                    printf("  [SIM] Graph '%s': added edge (%d -> %d)\n", 
+                    printf("  [SIM] Graph '%s': added edge (%d -> %d)\n",
                            name, arg1, arg2);
                 } else if (result == 0) {
                     semantic_warning("adding duplicate edge", name);
@@ -282,15 +318,15 @@ static void simulate_adt_operation(ASTNode *node) {
         case OP_REMOVE_EDGE: {
             if (has_arg1 && has_arg2) {
                 int result = adt_graph_remove_edge(name, arg1, arg2);
-                
+
                 if (result == -1) {
                     char msg[200];
                     snprintf(msg, sizeof(msg),
-                        "INVALID EDGE REMOVAL at compile time! Edge (%d -> %d) does not exist in graph '%s'",
-                        arg1, arg2, name);
+                             "INVALID EDGE REMOVAL at compile time! Edge (%d -> %d) does not exist in graph '%s'",
+                             arg1, arg2, name);
                     semantic_error(msg, NULL);
                 } else if (current_opts.verbose) {
-                    printf("  [SIM] Graph '%s': removed edge (%d -> %d)\n", 
+                    printf("  [SIM] Graph '%s': removed edge (%d -> %d)\n",
                            name, arg1, arg2);
                 }
             }
@@ -301,11 +337,6 @@ static void simulate_adt_operation(ASTNode *node) {
             break;
     }
 }
-
-/* ============================================================
- * FEATURE 5: SEMANTIC OPTIMIZATION DETECTION
- * Detect patterns like push-then-pop that can be eliminated
- * ============================================================ */
 
 typedef struct {
     char var_name[64];
@@ -325,18 +356,14 @@ static void check_optimization_pattern(const char *name, int op_code) {
     }
 
     strncpy(last_op.var_name, name, sizeof(last_op.var_name) - 1);
+    last_op.var_name[sizeof(last_op.var_name) - 1] = '\0';
     last_op.op_code = op_code;
 }
-
-/* ============================================================
- * MAIN AST TRAVERSAL
- * ============================================================ */
 
 static void check_node(ASTNode *node) {
     if (!node) return;
 
     switch (node->type) {
-
         case AST_PROGRAM:
             if (current_opts.verbose) {
                 printf("\n=== SIMPL Semantic Analysis ===\n");
@@ -359,7 +386,6 @@ static void check_node(ASTNode *node) {
                 semantic_error("variable already declared", name);
             } else {
                 Type expr_type = check_expression_type(node->right);
-                
                 if (expr_type != TYPE_INT) {
                     semantic_error("variable declarations must be integer-valued", name);
                 } else {
@@ -384,7 +410,7 @@ static void check_node(ASTNode *node) {
             } else {
                 symtab_insert(name, adt_type);
                 node->inferred_type = adt_type;
-                
+
                 if (current_opts.verbose) {
                     printf("  [DECL] %s : %s\n", name, type_to_string(adt_type));
                 }
@@ -413,12 +439,10 @@ static void check_node(ASTNode *node) {
         }
 
         case AST_PRINT: {
-            /* Allow printing of both int expressions and ADT variables */
             if (node->left && node->left->type == AST_IDENTIFIER) {
                 Type t = symtab_lookup(node->left->name);
                 if (t == TYPE_STACK || t == TYPE_QUEUE ||
                     t == TYPE_TREE  || t == TYPE_GRAPH) {
-                    /* ADT print — allowed, set inferred type */
                     node->inferred_type = t;
                     if (current_opts.verbose) {
                         printf("  [PRINT] %s : %s\n",
@@ -427,8 +451,7 @@ static void check_node(ASTNode *node) {
                     break;
                 }
             }
-            Type expr_type = check_expression_type(node->left);
-            node->inferred_type = expr_type;
+            node->inferred_type = check_expression_type(node->left);
             break;
         }
 
@@ -466,15 +489,15 @@ static void check_node(ASTNode *node) {
                 semantic_error("ADT operation on undeclared variable", name);
                 break;
             }
-            
+
             if (!is_valid_adt_op(op_code, var_type)) {
                 char msg[200];
                 snprintf(msg, sizeof(msg),
-                    "'%s' requires %s, but '%s' is %s",
-                    op_code_to_string(op_code),
-                    expected_type_for_op(op_code),
-                    name,
-                    type_to_string(var_type));
+                         "'%s' requires %s, but '%s' is %s",
+                         op_code_to_string(op_code),
+                         expected_type_for_op(op_code),
+                         name,
+                         type_to_string(var_type));
                 semantic_error(msg, NULL);
                 break;
             }
@@ -483,7 +506,6 @@ static void check_node(ASTNode *node) {
             simulate_adt_operation(node);
 
             if (node->right) {
-                /* Graph operations carry two expressions in a dummy BINOP node; check both arms. */
                 if (op_code == OP_ADD_EDGE || op_code == OP_REMOVE_EDGE) {
                     Type left_arg = check_expression_type(node->right->left);
                     Type right_arg = check_expression_type(node->right->right);
@@ -505,6 +527,44 @@ static void check_node(ASTNode *node) {
             break;
         }
 
+        case AST_FUNC_DEF: {
+            const char *fname = node->third->name;
+            char pnames[MAX_FUNC_PARAMS][32];
+            Type ptypes[MAX_FUNC_PARAMS];
+            int nparams = 0;
+            Symbol *saved_scope;
+
+            if (func_exists(fname)) {
+                semantic_error("function already defined", fname);
+                break;
+            }
+
+            collect_param_names(node->left, pnames, ptypes, &nparams);
+            func_register(fname, nparams, (const char (*)[32])pnames, ptypes, TYPE_INT);
+
+            saved_scope = symtab_get_head();
+            symtab_set_head(NULL);
+            for (int i = 0; i < nparams; i++) {
+                symtab_insert(pnames[i], TYPE_INT);
+            }
+            check_node(node->right);
+            symtab_set_head(saved_scope);
+            break;
+        }
+
+        case AST_RETURN: {
+            Type t = check_expression_type(node->left);
+            if (t != TYPE_INT) {
+                semantic_error("functions must return integers", NULL);
+            }
+            node->inferred_type = TYPE_INT;
+            break;
+        }
+
+        case AST_CALL:
+            check_expression_type(node);
+            break;
+
         default:
             check_node(node->left);
             check_node(node->right);
@@ -513,11 +573,9 @@ static void check_node(ASTNode *node) {
     }
 }
 
-/* ============================================================
- * PUBLIC API
- * ============================================================ */
-
 SemanticReport semantic_check_with_options(ASTNode *root, SemanticOptions opts) {
+    SemanticReport report;
+
     error_count = 0;
     warning_count = 0;
     optimization_count = 0;
@@ -532,11 +590,11 @@ SemanticReport semantic_check_with_options(ASTNode *root, SemanticOptions opts) 
     current_opts = opts;
     last_op.var_name[0] = '\0';
     last_op.op_code = 0;
-    
+
     symtab_init();
+    func_table_init();
     check_node(root);
 
-    SemanticReport report;
     report.error_count = error_count;
     report.warning_count = warning_count;
     report.optimizations_applied = optimization_count;

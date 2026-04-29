@@ -4,6 +4,8 @@
 #include <stdio.h>
 
 static Symbol *table = NULL;
+static FuncEntry func_table[MAX_FUNCTIONS];
+static int func_table_size = 0;
 
 void symtab_init(void) {
     /* Free existing table */
@@ -15,6 +17,10 @@ void symtab_init(void) {
         s = next;
     }
     table = NULL;
+}
+
+void func_table_init(void) {
+    func_table_size = 0;
 }
 
 int symtab_insert(const char *name, Type type) {
@@ -235,4 +241,45 @@ void adt_mark_unknown(const char *name) {
     if (s) {
         s->adt_state.is_size_known = 0;
     }
+}
+
+int func_register(const char *name, int nparams,
+                  const char param_names[][32],
+                  const Type param_types[],
+                  Type return_type) {
+    if (func_table_size >= MAX_FUNCTIONS) return -1;
+
+    FuncEntry *e = &func_table[func_table_size++];
+    strncpy(e->name, name, sizeof(e->name) - 1);
+    e->name[sizeof(e->name) - 1] = '\0';
+    e->param_count = nparams;
+    for (int i = 0; i < nparams && i < MAX_FUNC_PARAMS; i++) {
+        strncpy(e->param_names[i], param_names[i], sizeof(e->param_names[i]) - 1);
+        e->param_names[i][sizeof(e->param_names[i]) - 1] = '\0';
+        e->param_types[i] = param_types[i];
+    }
+    e->return_type = return_type;
+    e->defined = 1;
+    return 0;
+}
+
+FuncEntry *func_lookup(const char *name) {
+    for (int i = 0; i < func_table_size; i++) {
+        if (strcmp(func_table[i].name, name) == 0) {
+            return &func_table[i];
+        }
+    }
+    return NULL;
+}
+
+int func_exists(const char *name) {
+    return func_lookup(name) != NULL;
+}
+
+Symbol *symtab_get_head(void) {
+    return table;
+}
+
+void symtab_set_head(Symbol *h) {
+    table = h;
 }
