@@ -35,6 +35,10 @@ void yyerror(const char *s);
 %token PLUS MINUS MUL DIV
 %token LT GT EQ NEQ
 
+/* ---------- Function keywords ---------- */
+%token FUNC RETURN
+%token LPAREN RPAREN COMMA
+
 /* ---------- Identifiers & Literals ---------- */
 %token <str> IDENTIFIER
 %token <num> NUMBER
@@ -45,6 +49,7 @@ void yyerror(const char *s);
 %type <node> if_stmt while_stmt
 %type <node> expression term factor condition
 %type <node> adt_declaration adt_operation
+%type <node> func_def param_list param_list_ne return_stmt call_expr arg_list arg_list_ne
 
 %start program
 
@@ -76,6 +81,9 @@ statement
     | while_stmt      { $$ = $1; }
     | adt_declaration { $$ = $1; }
     | adt_operation   { $$ = $1; }
+    | func_def        { $$ = $1; }
+    | return_stmt     { $$ = $1; }
+    | call_expr       { $$ = $1; }
     ;
 
 /* ---------- Variable Declarations ---------- */
@@ -176,6 +184,7 @@ term
 factor
     : NUMBER     { $$ = make_number($1); }
     | IDENTIFIER { $$ = make_identifier($1); }
+    | call_expr  { $$ = $1; }
     ;
 
 /* ---------- ADT Operations ---------- */
@@ -231,6 +240,48 @@ adt_operation
         ASTNode *args = make_node(AST_BINOP, $3, $4, NULL);
         $$ = make_node(AST_ADT_OP, id, args, op_node);
       }
+    ;
+
+func_def
+    : FUNC IDENTIFIER LPAREN param_list RPAREN statement_list END
+      {
+        ASTNode *name_node = make_identifier($2);
+        $$ = make_node(AST_FUNC_DEF, $4, $6, name_node);
+      }
+    ;
+
+param_list
+    : /* empty */   { $$ = NULL; }
+    | param_list_ne { $$ = $1; }
+    ;
+
+param_list_ne
+    : IDENTIFIER
+      { $$ = make_node(AST_PARAM_LIST, make_param($1), NULL, NULL); }
+    | param_list_ne COMMA IDENTIFIER
+      { $$ = make_node(AST_PARAM_LIST, $1, make_param($3), NULL); }
+    ;
+
+return_stmt
+    : RETURN expression
+      { $$ = make_node(AST_RETURN, $2, NULL, NULL); }
+    ;
+
+call_expr
+    : IDENTIFIER LPAREN arg_list RPAREN
+      { $$ = make_call($1, $3); }
+    ;
+
+arg_list
+    : /* empty */ { $$ = NULL; }
+    | arg_list_ne { $$ = $1; }
+    ;
+
+arg_list_ne
+    : expression
+      { $$ = make_node(AST_ARG_LIST, $1, NULL, NULL); }
+    | arg_list_ne COMMA expression
+      { $$ = make_node(AST_ARG_LIST, $1, $3, NULL); }
     ;
 
 %%

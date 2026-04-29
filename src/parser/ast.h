@@ -19,7 +19,14 @@ typedef enum {
 
     AST_BINOP,
     AST_IDENTIFIER,
-    AST_NUMBER
+    AST_NUMBER,
+
+    AST_FUNC_DEF,
+    AST_PARAM_LIST,
+    AST_PARAM,
+    AST_RETURN,
+    AST_CALL,
+    AST_ARG_LIST
 } ASTNodeType;
 
 /* ADT type codes (stored in type_node->value for AST_ADT_DECL) */
@@ -62,6 +69,8 @@ ASTNode *make_node(ASTNodeType type,
 ASTNode *make_number(int value);
 ASTNode *make_identifier(char *name);
 ASTNode *make_binop(char op, ASTNode *l, ASTNode *r);
+ASTNode *make_param(char *name);
+ASTNode *make_call(char *fname, ASTNode *args);
 
 /* Global AST root (set by parser) */
 extern ASTNode *ast_root;

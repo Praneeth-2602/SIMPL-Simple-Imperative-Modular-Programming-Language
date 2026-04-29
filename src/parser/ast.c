@@ -42,3 +42,17 @@ ASTNode *make_binop(char op, ASTNode *l, ASTNode *r)
     n->op = op;
     return n;
 }
+
+ASTNode *make_param(char *name)
+{
+    ASTNode *n = make_node(AST_PARAM, NULL, NULL, NULL);
+    n->name = strdup(name);
+    return n;
+}
+
+ASTNode *make_call(char *fname, ASTNode *args)
+{
+    ASTNode *n = make_node(AST_CALL, args, NULL, NULL);
+    n->name = strdup(fname);
+    return n;
+}

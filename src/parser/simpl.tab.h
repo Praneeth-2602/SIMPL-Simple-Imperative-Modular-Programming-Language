@@ -85,8 +85,13 @@ extern int yydebug;
     GT = 286,                      /* GT  */
     EQ = 287,                      /* EQ  */
     NEQ = 288,                     /* NEQ  */
-    IDENTIFIER = 289,              /* IDENTIFIER  */
-    NUMBER = 290                   /* NUMBER  */
+    FUNC = 289,                    /* FUNC  */
+    RETURN = 290,                  /* RETURN  */
+    LPAREN = 291,                  /* LPAREN  */
+    RPAREN = 292,                  /* RPAREN  */
+    COMMA = 293,                   /* COMMA  */
+    IDENTIFIER = 294,              /* IDENTIFIER  */
+    NUMBER = 295                   /* NUMBER  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -101,7 +106,7 @@ union YYSTYPE
     char *str;
     struct ASTNode *node;
 
-#line 105 "src/parser/simpl.tab.h"
+#line 110 "src/parser/simpl.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
