@@ -1,190 +1,95 @@
 # SIMPL Compiler
 
-**SIMPL (Simple Imperative Modular Programming Language)** is a custom-designed, English-like programming language developed as part of a Compiler Design course project.
+**SIMPL (Simple Imperative Modular Programming Language)** is an English-like language and **full compiler pipeline** built for a Compiler Design course: frontend with strong ADT safety, three-address IR, classical opts, **Q-learning pass selection**, and **LLVM IR** codegen.
 
-The project implements a complete **compiler frontend**, including:
+SIMPL’s restricted semantics enable compile-time guarantees (stack underflow, invalid graph edges, non-printable ADTs) that C/GCC cannot give at the language level.
 
-- Lexical analysis
-- Syntax analysis
-- Abstract Syntax Tree (AST) construction
-- Semantic analysis with type and ADT correctness checks
+## Key features
 
-SIMPL is intentionally designed with restricted and well-defined semantics to enable strong compile-time guarantees and advanced semantic analysis that are difficult or impossible in low-level languages like C.
+- English-like syntax with built-in ADTs: **stack**, **queue**, **tree**, **graph**
+- Compile-time detection of undeclared/redeclared names, type errors, ADT misuse, underflow, invalid edge removal
+- Three-address IR + optimizers: const fold/prop, copy prop, CSE, DCE, unreachable elim
+- Tabular **Q-learning** (~5,184 states × 6 actions) choosing optimization passes (`--train` / `--eval`)
+- Emit **LLVM IR** (`.ll`) and run via Clang
 
----
-
-## ✨ Key Features
-
-- English-like, readable syntax
-- Built-in abstract data types (ADTs):
-  - Stack
-  - Queue
-  - Tree
-  - Graph
-- First-class semantic validation of ADT usage
-- Compile-time detection of:
-  - Undeclared variables
-  - Redeclarations
-  - Type mismatches
-  - Invalid ADT operations
-  - Stack/Queue underflow
-  - Invalid graph edge operations
-- Structured AST generation for further compilation stages
-- Transparent optimization reporting
-- Designed for extensibility toward IR generation and optimization
-
----
-
-## 🧱 Compiler Architecture
+## Compiler architecture
 
 ```
-Source Code (.simpl)
-        ↓
-   Lexer (Flex)
-        ↓
-   Parser (Bison)
-        ↓
- Abstract Syntax Tree (AST)
-        ↓
- Semantic Analysis
- (Symbol Table + Type Checking + ADT State Tracking)
-        ↓
- [IR Generation & Optimization — Planned]
+Source (.simpl)
+      ↓
+ Lexer (Flex) → Parser (Bison) → AST
+      ↓
+ Semantic analysis (symbol table + ADT state tracking)
+      ↓
+ Three-address IR
+      ↓
+ Optimizer (± RL agent selecting passes)
+      ↓
+ LLVM IR codegen → Clang → native binary
 ```
 
----
+See [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md) for RL MDP details and training status.
 
-## 🔥 Features GCC Cannot Provide
-
-SIMPL's semantic analyzer provides guarantees that are **impossible in C/GCC**:
-
-| Feature | Description |
-|---------|-------------|
-| **ADT Safety** | Stacks/queues cannot be printed or used in arithmetic |
-| **Compile-Time Underflow** | Detects stack/queue underflow before runtime |
-| **Graph Edge Tracking** | Detects removal of non-existent edges at compile time |
-| **Optimization Reporting** | Transparent reporting of optimization opportunities |
-| **Dead Code Detection** | Identifies patterns like push-then-pop |
-
----
-
-## 🛠 Toolchain
+## Toolchain
 
 | Tool | Purpose |
-|------|---------|
-| **C** | Implementation language |
-| **Flex** | Lexer generator |
-| **Bison** | Parser generator |
-| **GCC** | C compiler (via MSYS2 MinGW) |
-| **Platform** | Windows (MSYS2 MinGW64) |
+|---|---|
+| C (+ Clang recommended) | Compiler implementation |
+| Flex / Bison | Lexer & parser |
+| Clang | Compile generated `.ll` |
+| Make | Build driver |
 
----
+Works on macOS/Linux; Windows via MSYS2/MinGW is possible with the same tools.
 
-## 📂 Project Structure
+## Project structure
 
 ```
-SIMPL/
-├── src/
-│   ├── lexer/
-│   │   ├── simpl.l          # Flex lexer specification
-│   │   └── tokens.h         # Token definitions
-│   ├── parser/
-│   │   ├── simpl.y          # Bison grammar specification
-│   │   ├── ast.h            # AST node definitions
-│   │   └── ast.c            # AST construction functions
-│   ├── semantic/
-│   │   ├── semantic.h       # Semantic analyzer interface
-│   │   ├── semantic.c       # Semantic analysis implementation
-│   │   ├── symbol_table.h   # Symbol table interface
-│   │   └── symbol_table.c   # Symbol table + ADT state tracking
-│   └── optimizer/           # (planned)
-├── docs/
-│   ├── language-spec.md
-│   ├── grammar.md
-│   └── lexer-parser-design.md
-├── tests/
-│   ├── lexer/
-│   └── parser/
-├── build/
-├── Makefile
-└── README.md
+src/
+  lexer/ parser/ semantic/   # Frontend
+  ir/ optimizer/             # Mid-end
+  rl_agent/                  # Q-learning pass selection
+  codegen/                   # LLVM IR
+  main.c                     # CLI: compile / --train / --eval
+docs/                        # Language spec, grammar, implementation plan
+tests/ eval_files/           # Fixtures & RL eval corpus
+train.sh eval.sh             # Training / evaluation harnesses
+Makefile
 ```
 
----
-
-## 🚀 Building the Compiler
-
-From the project root:
+## Build
 
 ```bash
-# Generate parser
-bison -d src/parser/simpl.y -o src/parser/simpl.tab.c
-
-# Generate lexer
-flex -o src/lexer/lex.yy.c src/lexer/simpl.l
-
-# Compile everything
-gcc -I src/parser -I src/semantic \
-    src/parser/simpl.tab.c \
-    src/lexer/lex.yy.c \
-    src/parser/ast.c \
-    src/semantic/symbol_table.c \
-    src/semantic/semantic.c \
-    -o simpl
+make            # bison + flex + build ./simpl
+make clean      # optional
 ```
 
----
-
-## ▶️ Running SIMPL Programs
-
-### Interactive Mode
+## Run
 
 ```bash
-./simpl
+# Compile a program → output.ll (then native via helper)
+make run FILE=test.simpl
+
+# Or manually:
+./simpl test.simpl output.ll
+clang output.ll -o program && ./program
+
+# RL training / evaluation (uses rl_qtable.bin)
+./simpl program.simpl --train --quiet
+./train.sh
+./eval.sh
+./simpl --dump-qtable --qtable rl_qtable.bin
 ```
 
-Then type your code and press `Ctrl+D` (Unix) or `Ctrl+Z` (Windows) to compile.
+Normal compile loads the Q-table when present and may apply the learned pass policy; see implementation plan for flags (`--qtable`, `--eval`).
 
-### Pipe Input
+## Language examples
 
-```bash
-echo "let x be 10
-print x" | ./simpl
-```
-
-### From File
-
-```bash
-./simpl < program.simpl
-```
-
----
-
-## 📝 Language Syntax Examples
-
-### Variable Declaration
+### Basics
 
 ```simpl
 let x be 10
-let name be 42
-```
-
-### Assignment
-
-```simpl
-set x to 20
 set x to x + 5
-```
 
-### Arithmetic
-
-```simpl
-let result be x + y * 2
-```
-
-### Control Flow
-
-```simpl
 if x > 10 then
     print x
 else
@@ -196,126 +101,47 @@ while x > 0 do
 end
 ```
 
-### ADT Operations
+### ADTs
 
 ```simpl
-# Stack
 let s be stack
 push s 10
 push s 20
 pop s
 
-# Queue
 let q be queue
 enqueue q 1
-enqueue q 2
 dequeue q
 
-# Graph
 let g be graph
 add_edge g 1 2
-add_edge g 2 3
 remove_edge g 1 2
 ```
 
----
-
-## 🧪 Example Test Cases
-
-### ✅ Valid Program
-
-```simpl
-let s be stack
-push s 10
-push s 20
-pop s
-let x be 5
-print x
-```
-
-**Output:**
-
-```
-Parsing successful.
-
-=== SIMPL Semantic Analysis ===
-Features: ADT Safety, State Tracking, Optimization
-===============================
-
-  [DECL] s : stack
-  [SIM] Stack 's' size: 0 -> 1
-  [SIM] Stack 's' size: 1 -> 2
-  [SIM] Stack 's' size: 2 -> 1
-  [DECL] x : int
-
-=== Summary ===
-Errors:   0
-Warnings: 0
-===============
-
-Compilation successful!
-  - ADT safety: verified
-  - State tracking: complete
-```
-
-### ❌ Stack Underflow (Compile-Time Detection)
+### Compile-time safety
 
 ```simpl
 let s be stack
 pop s
+# → semantic error: STACK UNDERFLOW at compile time
 ```
-
-**Output:**
-
-```
-Semantic error: STACK UNDERFLOW at compile time! Stack 's' is empty (size=0)
-```
-
-### ❌ Cannot Print ADT
 
 ```simpl
 let s be stack
 print s
+# → cannot print stack — ADTs are not printable
 ```
 
-**Output:**
+## Docs
 
-```
-Semantic error: cannot print stack - ADTs are not printable (SIMPL safety)
-```
+- [`docs/language-spec.md`](docs/language-spec.md)
+- [`docs/grammar.md`](docs/grammar.md)
+- [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md) — IR / RL / eval pipeline
 
-### ❌ Invalid Graph Edge Removal
+## Academic context
 
-```simpl
-let g be graph
-remove_edge g 1 2
-```
+Course project emphasizing language-level safety, transparent analysis, and an energy-aware (instruction-elim vs compile-time) RL bandit over optimization passes.
 
-**Output:**
+## License
 
-```
-Semantic error: INVALID EDGE REMOVAL at compile time! Edge (1 -> 2) does not exist in graph 'g'
-```
-
----
-
-## 🎓 Academic Context
-
-This compiler was developed as part of a **Compiler Design** course project. The design emphasizes:
-
-1. **Language-Level Safety** — Guarantees that cannot be provided by compiling to C
-2. **Compile-Time Analysis** — Catching errors before runtime
-3. **Transparent Compilation** — Clear reporting of analysis and optimization decisions
-4. **Extensibility** — Clean architecture for adding IR generation and optimization
-
----
-
-## 📄 License
-
-This project is developed for educational purposes as part of a university course.
-
----
-
-## 👤 Author
-
-Developed as a Compiler Design course project.
+Educational / course use.
